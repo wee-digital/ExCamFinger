@@ -1,0 +1,46 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: "kotlin-kapt"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.appcompat:appcompat:$app_compat_version"
+    implementation "androidx.core:core:$core_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+
+    // GOOGLE SERVICES
+    implementation "com.google.firebase:firebase-ml-model-interpreter:22.0.1"
+    implementation "com.google.firebase:firebase-ml-vision-face-model:19.0.0"
+    implementation "com.google.firebase:firebase-ml-vision-automl:18.0.3"
+    implementation "com.google.firebase:firebase-ml-vision:24.0.1"
+
+    // INTER REAL SENCE LIB
+    implementation "com.intel.realsense:librealsense:2.34.0@aar"
+
+    // MTCN DETECTOR
+    implementation 'org.tensorflow:tensorflow-android:1.13.1'
+
+}

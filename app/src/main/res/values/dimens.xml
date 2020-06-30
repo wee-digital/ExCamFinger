@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="tinyMargin">@dimen/_4sdp</dimen>
+    <dimen name="smallMargin">@dimen/_8sdp</dimen>
+    <dimen name="mediumMargin">@dimen/_12sdp</dimen>
+    <dimen name="largeMarin">@dimen/_16sdp</dimen>
+    <dimen name="extraMargin">@dimen/_28sdp</dimen>
+    <dimen name="contentMargin">@dimen/_28sdp</dimen>
+
+    <dimen name="smallSize">@dimen/_8sdp</dimen>
+    <dimen name="smallRadius">@dimen/_4sdp</dimen>
+    <dimen name="mediumSize">@dimen/_26sdp</dimen>
+    <dimen name="mediumRadius">@dimen/_15sdp</dimen>
+    <dimen name="dialogMargin">@dimen/_20sdp</dimen>
+    <dimen name="dialogRadius">@dimen/_8sdp</dimen>
+    <dimen name="dialogMarginTop">@dimen/_32sdp</dimen>
+    <dimen name="rowSize">@dimen/_24sdp</dimen>
+    <dimen name="rowRadius">@dimen/_14sdp</dimen>
+    <dimen name="inputPadding">@dimen/_10sdp</dimen>
+    <dimen name="scrollTipHeight">@dimen/_86sdp</dimen>
+
+    <dimen name="smallText">@dimen/_7ssp</dimen>
+    <dimen name="mediumText">@dimen/_9ssp</dimen>
+    <dimen name="largeText">@dimen/_11ssp</dimen>
+    <dimen name="extraText">@dimen/_13ssp</dimen>
+    <dimen name="hugeText">@dimen/_15ssp</dimen>
+
+    <dimen name="headerSize">@dimen/_52sdp</dimen>
+
+    <dimen name="serviceRadius">@dimen/_8sdp</dimen>
+    <dimen name="serviceItemMargin">@dimen/_2sdp</dimen>
+    <dimen name="serviceGroupMargin">@dimen/_8sdp</dimen>
+    <dimen name="serviceGroupMarginTop">@dimen/_6sdp</dimen>
+
+</resources>

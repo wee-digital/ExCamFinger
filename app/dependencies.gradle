@@ -1,0 +1,25 @@
+dependencies {
+
+    implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.appcompat:appcompat:$app_compat_version"
+    implementation "androidx.core:core:$core_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+    implementation "com.google.android.material:material:$material_version"
+    implementation "androidx.multidex:multidex:2.0.1"
+
+    // MULTI DIMENSIONS
+    implementation "com.intuit.sdp:sdp-android:$dimen_version"
+    implementation "com.intuit.ssp:ssp-android:$dimen_version"
+
+    // CAMERA
+    implementation project(":camera")
+
+    // UTILS LIBRARY
+    implementation project(":library")
+
+    // FINGERPRINT SCANNER PA00I MODULE
+    implementation project(":finger")
+
+
+}

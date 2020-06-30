@@ -1,0 +1,159 @@
+{
+  "project_info": {
+    "project_number": "581220455393",
+    "firebase_url": "https://vietinbank-a40ce.firebaseio.com",
+    "project_id": "vietinbank-a40ce",
+    "storage_bucket": "vietinbank-a40ce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581220455393:android:109c8dc89697b5b80ff8a0",
+        "android_client_info": {
+          "package_name": "wee.vietinbank.kiosk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581220455393-lv8fogi5v5iu1i3uatcuaufs818fr8de.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wee.vietinbank.kiosk",
+            "certificate_hash": "f0586c7c86aeb9873ee03cc9b9766748fcd3c468"
+          }
+        },
+        {
+          "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANnWXoYluhLfquc1lcPWwF6DoNzgfuw7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581220455393:android:122329009f509b880ff8a0",
+        "android_client_info": {
+          "package_name": "wee.vietinbank.kiosk.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581220455393-j7fbkosfrne3ffuflnf5hrj9cqjl1be0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wee.vietinbank.kiosk.dev",
+            "certificate_hash": "f0586c7c86aeb9873ee03cc9b9766748fcd3c468"
+          }
+        },
+        {
+          "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANnWXoYluhLfquc1lcPWwF6DoNzgfuw7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581220455393:android:5ecac6d55f363a5b0ff8a0",
+        "android_client_info": {
+          "package_name": "wee.vietinbank.kiosk.ppe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581220455393-9234jp9gdf6e00bi26cvjas95ei9iuie.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wee.vietinbank.kiosk.ppe",
+            "certificate_hash": "f0586c7c86aeb9873ee03cc9b9766748fcd3c468"
+          }
+        },
+        {
+          "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANnWXoYluhLfquc1lcPWwF6DoNzgfuw7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581220455393:android:c744df2f6f22fc670ff8a0",
+        "android_client_info": {
+          "package_name": "wee.vietinbank.kiosk.uat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581220455393-m5fppgqjkpmusbjhutntof1vss78mi2l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "wee.vietinbank.kiosk.uat",
+            "certificate_hash": "f0586c7c86aeb9873ee03cc9b9766748fcd3c468"
+          }
+        },
+        {
+          "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANnWXoYluhLfquc1lcPWwF6DoNzgfuw7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "581220455393-3pqj4kn70mae2ereg1tdctk5oa1ub204.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

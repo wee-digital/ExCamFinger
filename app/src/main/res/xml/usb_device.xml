@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Intel(R) RealSense(TM) Depth Camera SR305-->
+    <usb-device
+        product-id="2888"
+        vendor-id="32902" />
+
+    <!--GDMicroelectronics PA00I Fingerprint Module-->
+    <usb-device
+        product-id="22288"
+        vendor-id="1155" />
+
+    <!--IP1000 Printer -->
+    <usb-device
+        product-id="8211"
+        vendor-id="1305" />
+
+    <!--Epson TM-T82 -->
+    <usb-device
+        product-id="3601"
+        vendor-id="1208" />
+
+</resources>

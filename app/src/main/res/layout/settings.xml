@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ParentLayout"
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/viewContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/mainViewScrollContent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewDevicesTitle"
+                style="@style/Settings.Title"
+                android:text="DEVICES" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewFingerprint"
+                style="@style/Settings.Item"
+                tools:text="Fingerprint usb" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewPrinter"
+                style="@style/Settings.Item"
+                android:visibility="gone"
+                tools:text="Printer usb" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewCamera"
+                style="@style/Settings.Item"
+                tools:text="Camera usb" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewFaceDetect"
+                style="@style/Settings.Item"
+                android:text="Face detect usb" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewCameraFaceDetect"
+                style="@style/Settings.Item"
+                android:text="Camera face detect usb" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewDevices"
+                style="@style/Settings.Item"
+                tools:text="Devices" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/viewContainer"
+        style="@style/MatchParent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

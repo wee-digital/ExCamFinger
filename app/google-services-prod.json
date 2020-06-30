@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "382402101881",
+    "firebase_url": "https://vietinbank-1ae6f.firebaseio.com",
+    "project_id": "vietinbank-1ae6f",
+    "storage_bucket": "vietinbank-1ae6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382402101881:android:1db58516570a60d9",
+        "android_client_info": {
+          "package_name": "wee.vietinbank.kiosk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382402101881-9fl9bp2n3m702l2fv8f9rc37g6k3alle.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2XJzDT2W2hsJ-gMVWIu9o9yxFNlly_QA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382402101881-9fl9bp2n3m702l2fv8f9rc37g6k3alle.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

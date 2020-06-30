@@ -1,0 +1,81 @@
+apply plugin: "com.android.application"
+
+apply plugin: "kotlin-android"
+
+apply plugin: "kotlin-android-extensions"
+
+apply plugin: "kotlin-kapt"
+
+apply plugin: "com.google.gms.google-services"
+
+apply from: "dependencies.gradle"
+
+android {
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "wee.vietinbank.kiosk"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        flavorDimensions "default"
+        multiDexEnabled true
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+                arg("room.incremental", "true")
+                arg("room.expandProjection", "true")
+            }
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+        sourceSets {
+            main {
+                jniLibs.srcDirs = ["libs"]
+            }
+        }
+
+        packagingOptions {
+            exclude "META-INF/androidx.exifinterface_exifinterface.version"
+            exclude "META-INF/proguard/androidx-annotations.pro"
+            exclude 'META-INF/license.text'
+            exclude 'META-INF/notice.text'
+            exclude 'META-INF/ASL2.0'
+        }
+
+        dexOptions {
+            javaMaxHeapSize "4g"
+        }
+
+        aaptOptions {
+            noCompress "tflite"
+        }
+
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled true
+            }
+        }
+    }
+
+}
