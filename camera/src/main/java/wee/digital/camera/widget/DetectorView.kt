@@ -11,7 +11,7 @@ import wee.digital.camera.R
 import wee.digital.camera.detector.FaceDetector
 import wee.digital.camera.job.DebugDetectJob
 
-class DetectorView : ConstraintLayout, DebugDetectJob.UiListener {
+class DetectorView : ConstraintLayout, DebugDetectJob.Listener {
 
     var faceRectListener: (Int, Int, Int, Int) -> Unit = { _, _, _, _ ->
     }

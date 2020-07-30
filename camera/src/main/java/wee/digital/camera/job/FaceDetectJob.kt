@@ -67,7 +67,7 @@ class FaceDetectJob(private var uiListener: Listener) :
     }
 
     override fun onFaceRect(left: Int, top: Int, width: Int, height: Int): Boolean {
-        return width > 170
+        return width > 90
     }
 
     override fun onFaceDegrees(x: Double, y: Double): Boolean {
@@ -120,7 +120,7 @@ class FaceDetectJob(private var uiListener: Listener) :
         if (!hasDetect) return
         noneFaceCount.set(0)
         uiThread {
-            uiListener.onFaceDetected(bitmap.toBytes())
+            uiListener.onFaceDetected(bitmap)
         }
     }
 
@@ -143,7 +143,7 @@ class FaceDetectJob(private var uiListener: Listener) :
      */
     interface Listener {
 
-        fun onFaceDetected(raw: ByteArray)
+        fun onFaceDetected(bitmap: Bitmap)
 
         fun onFaceLeaved()
 

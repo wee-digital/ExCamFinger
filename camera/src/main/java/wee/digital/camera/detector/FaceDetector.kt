@@ -167,15 +167,25 @@ class FaceDetector {
      */
     interface OptionListener {
 
-        fun onMaskLabel(label: String, confidence: Float): Boolean = label == "face_chip"
+        fun onMaskLabel(label: String, confidence: Float): Boolean {
+            return label == "face_chip"
+        }
 
-        fun onDepthLabel(label: String, confidence: Float): Boolean = label == "real"
+        fun onDepthLabel(label: String, confidence: Float): Boolean {
+            return label == "real"
+        }
 
-        fun onFaceScore(score: Float): Boolean = true
+        fun onFaceScore(score: Float): Boolean {
+            return true
+        }
 
-        fun onFaceRect(left: Int, top: Int, width: Int, height: Int): Boolean = true
+        fun onFaceRect(left: Int, top: Int, width: Int, height: Int): Boolean {
+            return true
+        }
 
-        fun onFaceDegrees(x: Double, y: Double): Boolean = true
+        fun onFaceDegrees(x: Double, y: Double): Boolean {
+            return true
+        }
 
     }
 

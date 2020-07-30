@@ -10,12 +10,12 @@ import wee.digital.camera.detector.FaceDetector
 /**
  * simple callback wrapper on UI
  */
-class DebugDetectJob(private var uiListener: UiListener) :
+class DebugDetectJob(private var uiListener: Listener) :
         FaceDetector.OptionListener,
         FaceDetector.DataListener,
         FaceDetector.StatusListener {
 
-    interface UiListener : FaceDetector.OptionListener, FaceDetector.DataListener,
+    interface Listener : FaceDetector.OptionListener, FaceDetector.DataListener,
             FaceDetector.StatusListener
 
     private val imagesObserver = Observer<Pair<Bitmap, Bitmap>?> {
@@ -40,7 +40,7 @@ class DebugDetectJob(private var uiListener: UiListener) :
         })
     }
 
-    private fun uiCallback(block: UiListener.() -> Unit) {
+    private fun uiCallback(block: Listener.() -> Unit) {
         Handler(Looper.getMainLooper()).post {
             uiListener.block()
         }

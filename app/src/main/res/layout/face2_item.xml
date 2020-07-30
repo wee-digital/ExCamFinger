@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/imageViewPortrait"
+    android:layout_width="@dimen/_96sdp"
+    android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/_4sdp"
-    android:layout_width="@dimen/_46sdp"
-    android:layout_height="@dimen/_60sdp"
     android:background="@android:color/black"
-    tools:src="@tools:sample/avatars" />
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/imageViewPortrait"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_120sdp"
+        android:layout_gravity="center_vertical"
+        tools:src="@tools:sample/avatars" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_32sdp"
+        android:gravity="center"
+        android:text="REAL"
+        android:textAllCaps="true"
+        android:textColor="@android:color/holo_green_light"
+        android:textSize="@dimen/_24ssp"
+        android:textStyle="bold" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
