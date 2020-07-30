@@ -12,11 +12,11 @@ class FaceDetector {
         const val MIN_SIZE = 300
     }
 
-    private var maskFilter = ModelFilter("face/mask/manifest.json")
+    private val maskFilter = ModelFilter("face/mask/manifest.json")
 
-    private var depthFilter = ModelFilter("face/depth/manifest.json")
+    private val depthFilter = ModelFilter("face/depth/manifest.json")
 
-    private var mtcnn: MTCNN = MTCNN(RealSense.app.assets)
+    private val mtcnn: MTCNN = MTCNN(RealSense.app.assets)
 
     private var currentFace: Box? = null
 
@@ -27,11 +27,6 @@ class FaceDetector {
     var statusListener: StatusListener? = null
 
     var optionListener: OptionListener = object : OptionListener {}
-
-    constructor() {
-        depthFilter.initModel()
-        maskFilter.initModel()
-    }
 
     fun release() {
         currentFace = null
@@ -50,6 +45,8 @@ class FaceDetector {
                         statusListener?.onFaceLeaved()
                     } else {
                         statusListener?.onFacePerformed()
+                        if (!faceChangeProcess(box)) statusListener?.onFaceChanged()
+                        currentFace = box
                         onFaceDetect(box, colorBitmap, depthBitmap)
                     }
                 }
@@ -75,8 +72,6 @@ class FaceDetector {
         var degreesValid = false
         box.getDegrees { x, y -> degreesValid = optionListener.onFaceDegrees(x, y) }
         if (!degreesValid) return
-
-        if (!faceChangeProcess(box)) statusListener?.onFaceChanged()
 
         val boxRect = box.transformToRect()
 
@@ -107,7 +102,7 @@ class FaceDetector {
      */
     private fun onDepthDetect(boxRect: Rect, colorBitmap: Bitmap, depthBitmap: Bitmap) {
 
-        val faceBitmap = boxRect.cropDepthFace(depthBitmap) ?: return
+        val faceBitmap = boxRect.cropColorFace(depthBitmap) ?: return
         dataListener?.onFaceDepthImage(faceBitmap)
 
         depthFilter.processImage(faceBitmap) { text, confidence ->
@@ -128,10 +123,7 @@ class FaceDetector {
     }
 
     private fun faceChangeProcess(face: Box): Boolean {
-        if (currentFace == null) {
-            currentFace = face
-            return false
-        }
+        currentFace ?: return false
         val nowRect = face.transformToRect()
         val nowCenterX = nowRect.exactCenterX()
         val nowCenterY = nowRect.exactCenterY()
@@ -141,7 +133,6 @@ class FaceDetector {
         val curCenterY = curRect.exactCenterY()
         val curCenterPoint = PointF(curCenterX, curCenterY)
         val dist = distancePoint(nowCenterPoint, curCenterPoint)
-        currentFace = face
         return dist < MIN_DISTANCE
     }
 

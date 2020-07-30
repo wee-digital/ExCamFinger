@@ -23,7 +23,8 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addClickListener(viewCamera, viewFaceDetect, viewCameraFaceDetect, viewPrinter, viewFingerprint, viewDevices)
+        addClickListener(viewCamera, viewFaceDetect, viewFaceDetect2, viewCameraFaceDetect,
+                viewPrinter, viewFingerprint, viewDevices)
 
         UsbLiveData.builder(this)
                 .devices(RealSense.VENDOR_ID, Cashino.VENDOR_ID, HeroFun.VENDOR_ID)
@@ -35,8 +36,9 @@ class SettingsActivity : BaseActivity() {
     override fun onViewClick(view: View) {
         when (view) {
             viewCamera -> add(CameraFragment(), true)
-            viewFaceDetect -> add(FaceDetectFragment(), true)
-            viewCameraFaceDetect -> add(CameraFaceDetectFragment(), true)
+            viewFaceDetect -> add(FaceFragment(), true)
+            viewFaceDetect2 -> add(Face2Fragment(), true)
+            viewCameraFaceDetect -> add(CamFaceFragment(), true)
             viewPrinter -> add(PrinterFragment(), true)
             viewFingerprint -> add(FingerFragment(), true)
         }

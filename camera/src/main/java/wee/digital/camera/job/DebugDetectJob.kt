@@ -31,7 +31,6 @@ class DebugDetectJob(private var uiListener: UiListener) :
     }
 
     fun observe(lifecycleOwner: LifecycleOwner) {
-        detector.release()
         RealSense.imagesLiveData.observe(lifecycleOwner, imagesObserver)
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

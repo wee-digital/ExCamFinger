@@ -30,6 +30,12 @@ class CameraView : ConstraintLayout {
 
     private fun onViewInit(context: Context) {
         LayoutInflater.from(context).inflate(R.layout.widget_camera_view, this)
+        ConstraintSet().apply {
+            clone(viewPreview)
+            setDimensionRatio(imageViewColor.id, "H,${RealSenseControl.COLOR_WIDTH}:${RealSenseControl.COLOR_HEIGHT}")
+            setDimensionRatio(imageViewDepth.id, "H,${RealSenseControl.DEPTH_WIDTH}:${RealSenseControl.DEPTH_HEIGHT}")
+            applyTo(viewPreview)
+        }
     }
 
     fun observe(lifecycleOwner: LifecycleOwner) {
@@ -41,44 +47,50 @@ class CameraView : ConstraintLayout {
         })
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+    }
+
     fun targetFace(left: Int, top: Int = 0, width: Int = 0, height: Int = 0) {
         if (left < 0) {
             imageViewCensored.visibility = View.INVISIBLE
             return
         }
         imageViewCensored.visibility = View.VISIBLE
-        val set = ConstraintSet()
-        set.clone(viewPreview)
-        set.connect(
-                imageViewCensored.id,
-                ConstraintSet.START,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.START,
-                viewPreview.width * left / RealSenseControl.COLOR_WIDTH
-        )
-        set.connect(
-                imageViewCensored.id,
-                ConstraintSet.END,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.END,
-                viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
-        )
+        ConstraintSet().apply {
+            clone(viewPreview)
+            connect(
+                    imageViewCensored.id,
+                    ConstraintSet.START,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.START,
+                    viewPreview.width * left / RealSenseControl.COLOR_WIDTH
+            )
+            connect(
+                    imageViewCensored.id,
+                    ConstraintSet.END,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.END,
+                    viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
+            )
 
-        set.connect(
-                imageViewCensored.id,
-                ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP,
-                viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
-        )
-        set.connect(
-                imageViewCensored.id,
-                ConstraintSet.BOTTOM,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM,
-                viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
-        )
-        set.applyTo(viewPreview)
+            connect(
+                    imageViewCensored.id,
+                    ConstraintSet.TOP,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.TOP,
+                    viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
+            )
+            connect(
+                    imageViewCensored.id,
+                    ConstraintSet.BOTTOM,
+                    ConstraintSet.PARENT_ID,
+                    ConstraintSet.BOTTOM,
+                    viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
+            )
+            applyTo(viewPreview)
+        }
+
     }
 
 }

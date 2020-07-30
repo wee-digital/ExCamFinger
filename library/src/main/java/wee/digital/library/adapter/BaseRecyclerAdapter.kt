@@ -1,32 +1,22 @@
 package wee.digital.library.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import wee.digital.library.view.ViewClickListener
 
 abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v)
-
-    /**
-     * [BaseRecyclerAdapter] abstract function for initialize recycler view type.
-     */
-    @LayoutRes
-    protected abstract fun layoutResource(model: T, position: Int): Int
-
-    protected abstract fun View.onBindModel(model: T, position: Int, @LayoutRes layout: Int)
 
 
     /**
      * [RecyclerView.Adapter] override.
      */
     override fun getItemCount(): Int {
-        return if (blankLayoutResource != 0 || footerLayoutResource != 0)
-            size + 1
+
+        return if (blankLayoutResource != 0 || footerLayoutResource != 0) size + 1
         else size
     }
 
@@ -42,12 +32,7 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = if (viewType != 0) {
-            LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        } else {
-            goneView(parent.context)
-        }
-        return ViewHolder(view)
+        return ViewHolder(onCreateItemView(parent, viewType))
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
@@ -57,243 +42,253 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerView.ViewHo
         if (type == 0) return
 
         if (type == blankLayoutResource) {
-            blankVisible(viewHolder.itemView)
             return
         }
 
         if (type == footerLayoutResource) {
-            if (footerIndexed == position) return
-            footerIndexed = position
-            footerVisible(viewHolder.itemView, position)
+            if (position.isNotIndexed) onFooterIndexChange(viewHolder.itemView, position)
             return
         }
 
         val model = get(position) ?: return
 
-        viewHolder.itemView.onBindModel(model, position, type)
+        if (position.isNotIndexed) viewHolder.itemView.onFirstBindModel(model, position, type)
+        else viewHolder.itemView.onBindModel(model, position, type)
 
-        viewHolder.itemView.setOnClickListener(ViewClickListener {
-            itemClick(model, position)
-        })
+        position.updateLastIndex()
 
+        viewHolder.itemView.setOnClickListener  {
+            onItemClick(model, position)
+        }
 
         viewHolder.itemView.setOnLongClickListener {
-            itemLongClick(model, position)
+            onItemLongClick(model, position)
             return@setOnLongClickListener true
+        }
+
+    }
+
+
+    /**
+     * [BaseRecyclerAdapter] abstractions
+     */
+    @LayoutRes
+    protected abstract fun layoutResource(model: T, position: Int): Int
+
+    protected abstract fun View.onBindModel(model: T, position: Int, @LayoutRes layout: Int)
+
+    open fun View.onFirstBindModel(model: T, position: Int, @LayoutRes layout: Int) {
+        onBindModel(model, position, layout)
+    }
+
+    open fun onCreateItemView(parent: ViewGroup, viewType: Int): View {
+        return if (viewType == 0) {
+            View(parent.context).apply { visibility = View.GONE }
+        } else {
+            LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         }
     }
 
-    private fun goneView(context: Context): View {
-        val view = View(context)
-        view.visibility = View.GONE
-        return view
-    }
 
     /**
-     * Layout resource for empty list.
+     * Layout resource for empty data.
      */
-    private var blankLayoutResource = blankLayoutResource()
-
     @LayoutRes
-    open fun blankLayoutResource(): Int {
-        return 0
-    }
+    open var blankLayoutResource: Int = 0
 
 
     /**
      * Layout resource for footer item.
      */
-    @Volatile
-    private var footerIndexed: Int = -1
-
-    private var footerLayoutResource = footerLayoutResource()
-
     @LayoutRes
-    open fun footerLayoutResource(): Int {
-        return 0
-    }
+    open var footerLayoutResource: Int = 0
 
-    open fun showFooter(@LayoutRes res: Int) {
+    var onFooterIndexChange: (View, Int) -> Unit = { _, _ -> }
+
+    fun showFooter(@LayoutRes res: Int) {
         footerLayoutResource = res
         notifyItemChanged(size)
     }
 
-    open fun hideFooter() {
+    fun hideFooter() {
         footerLayoutResource = 0
         notifyItemChanged(size)
     }
 
 
     /**
-     * User interfaces.
+     * Item view click
      */
-    var itemClick: (T, Int) -> Unit = { _, _ -> }
+    var onItemClick: (T, Int) -> Unit = { _, _ -> }
 
-    open fun onItemClick(block: (T, Int) -> Unit) {
-        itemClick = block
+    var onItemLongClick: (T, Int) -> Unit = { _, _ -> }
+
+
+    /**
+     * Position
+     */
+    private var lastIndexPosition: Int = -1
+
+    private fun Int.updateLastIndex() {
+        if (this > lastIndexPosition) lastIndexPosition = this
     }
 
-    private var itemLongClick: (T, Int) -> Unit = { _, _ -> }
+    private val Int.isNotIndexed: Boolean get() = this > lastIndexPosition
 
-    open fun onItemLongClick(block: (T, Int) -> Unit) {
-        itemLongClick = block
-    }
+    private val Int.indexInBound: Boolean get() = this > -1 && this < size
 
-    // footerLayoutResource() != 0
-    private var footerVisible: (View, Int) -> Unit = { _, _ -> }
-
-    open fun onBindFooter(block: (View, Int) -> Unit) {
-        footerVisible = block
-    }
-
-    // blankLayoutResource() != 0
-    private var blankVisible: (View) -> Unit = {}
-
-    open fun onBindBlank(block: ((View) -> Unit)) {
-        blankVisible = block
-    }
+    private val Int.indexOutBound: Boolean get() = this < 0 || this >= size
 
 
     /**
      * Data
      */
-    var listItem: MutableList<T> = mutableListOf()
+    val emptyData: MutableList<T> = mutableListOf()
 
-    open val size: Int get() = listItem.size
+    var currentList: MutableList<T> = emptyData
+        private set
 
-    open val dataIsEmpty: Boolean get() = listItem.isEmpty()
+    val size: Int get() = currentList.size
 
-    open val dataNotEmpty: Boolean get() = listItem.isNotEmpty()
+    val dataIsEmpty: Boolean get() = currentList.isEmpty()
 
-    open val lastPosition: Int get() = if (listItem.isEmpty()) -1 else (listItem.size - 1)
+    val dataNotEmpty: Boolean get() = currentList.isNotEmpty()
 
-    open fun indexInBound(position: Int): Boolean {
-        return position > -1 && position < size
-    }
+    val lastPosition: Int get() = if (currentList.isEmpty()) -1 else (currentList.size - 1)
 
+
+    /**
+     * List update
+     */
     open fun get(position: Int): T? {
-        if (indexInBound(position)) return listItem[position]
+        if (position.indexInBound) return currentList[position]
         return null
     }
 
     open fun set(collection: Collection<T>?) {
-        listItem = collection?.toMutableList() ?: mutableListOf()
+        currentList = collection?.toMutableList() ?: emptyData
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
-    open fun set(mutableList: MutableList<T>?) {
-        listItem = mutableList ?: mutableListOf()
+    open fun set(list: MutableList<T>?) {
+        currentList = list ?: emptyData
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
     open fun set(array: Array<T>?) {
-        listItem = array?.toMutableList() ?: mutableListOf()
+        currentList = array?.toMutableList() ?: emptyData
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
     open fun set(model: T?) {
-        listItem = if (null == model) mutableListOf()
+        currentList = if (model == null) emptyData
         else mutableListOf(model)
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
     open fun setElseEmpty(collection: Collection<T>?) {
         if (collection.isNullOrEmpty()) return
-        listItem = collection.toMutableList()
+        currentList = collection.toMutableList()
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
-    open fun setElseEmpty(mutableList: MutableList<T>?) {
-        if (mutableList.isNullOrEmpty()) return
-        listItem = mutableList
+    open fun setElseEmpty(list: MutableList<T>?) {
+        if (list.isNullOrEmpty()) return
+        currentList = list
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
     open fun setElseEmpty(array: Array<T>?) {
-        if (null == array || array.isEmpty()) return
-        listItem = array.toMutableList()
+        if (array == null || array.isEmpty()) return
+        currentList = array.toMutableList()
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
     open fun setElseEmpty(model: T?) {
         model ?: return
-        listItem = mutableListOf(model)
+        currentList = mutableListOf(model)
+        lastIndexPosition = -1
         notifyDataSetChanged()
     }
 
     open fun add(collection: Collection<T>?) {
         if (collection.isNullOrEmpty()) return
-        listItem.addAll(collection)
-        notifyRangeChanged()
+        currentList.addAll(collection)
+        notifyDataSetChanged()
     }
 
     open fun add(array: Array<T>?) {
-        if (null == array || array.isEmpty()) return
-        listItem.addAll(array)
-        notifyRangeChanged()
+        if (array == null || array.isEmpty()) return
+        currentList.addAll(array)
+        notifyDataSetChanged()
     }
 
     open fun add(model: T?) {
         model ?: return
-        listItem.add(model)
-        notifyRangeChanged()
+        currentList.add(model)
+        notifyDataSetChanged()
     }
 
     open fun addFirst(model: T?) {
         model ?: return
-        listItem.add(0, model)
+        currentList.add(0, model)
         notifyDataSetChanged()
     }
 
     open fun edit(index: Int, model: T?) {
         model ?: return
-        if (indexInBound(index)) {
-            listItem[index] = model
+        if (index.indexInBound) {
+            currentList[index] = model
             notifyItemChanged(index)
         }
     }
 
     open fun remove(index: Int) {
-        listItem.removeAt(index)
+        currentList.removeAt(index)
         notifyItemRemoved(index)
     }
 
     open fun remove(model: T?) {
         model ?: return
-        val index = listItem.indexOf(model)
-        if (indexInBound(index)) {
-            listItem.remove(model)
+        val index = currentList.indexOf(model)
+        if (index.indexInBound) {
+            currentList.remove(model)
             notifyItemRemoved(index)
         }
     }
 
     open fun clear() {
-        listItem.clear()
+        currentList.clear()
         notifyDataSetChanged()
     }
 
     open fun unBind() {
-        listItem = mutableListOf()
+        currentList = emptyData
         notifyDataSetChanged()
     }
 
-    open fun notifyRangeChanged() {
-        val s = size
-        notifyItemRangeChanged(s, size + 1)
-    }
 
-    open fun bind(recyclerView: RecyclerView, block: (androidx.recyclerview.widget.LinearLayoutManager.() -> Unit)? = null) {
+    /**
+     * Binding
+     */
+    open fun bind(recyclerView: RecyclerView, block: (LinearLayoutManager.() -> Unit)? = null) {
 
-        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
+        val layoutManager = LinearLayoutManager(recyclerView.context)
         block?.let { layoutManager.block() }
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = this
     }
 
-    open fun bind(recyclerView: RecyclerView, spanCount: Int, includeEdge: Boolean = true, block: (androidx.recyclerview.widget.GridLayoutManager.() -> Unit)? = null) {
-
-        val layoutManager = androidx.recyclerview.widget.GridLayoutManager(recyclerView.context, spanCount)
-        layoutManager.spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+    open fun bind(recyclerView: RecyclerView, spanCount: Int, includeEdge: Boolean = true, block: (GridLayoutManager.() -> Unit)? = null) {
+        val layoutManager = GridLayoutManager(recyclerView.context, spanCount)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return if (dataIsEmpty || position == size) layoutManager.spanCount
                 else 1
@@ -303,5 +298,11 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerView.ViewHo
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = this
     }
+
+
+    /**
+     * Utils
+     */
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v)
 
 }

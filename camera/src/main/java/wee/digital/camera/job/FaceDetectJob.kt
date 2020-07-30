@@ -3,7 +3,6 @@ package wee.digital.camera.job
 import android.graphics.Bitmap
 import androidx.lifecycle.*
 import wee.digital.camera.RealSense
-import wee.digital.camera.RealSenseControl
 import wee.digital.camera.detector.FaceDetector
 import wee.digital.camera.toBytes
 import wee.digital.camera.uiThread
@@ -37,7 +36,6 @@ class FaceDetectJob(private var uiListener: Listener) :
     }
 
     fun observe(lifecycleOwner: LifecycleOwner) {
-        detector.release()
         startDetect()
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -69,7 +67,7 @@ class FaceDetectJob(private var uiListener: Listener) :
     }
 
     override fun onFaceRect(left: Int, top: Int, width: Int, height: Int): Boolean {
-        return width > 90
+        return width > 170
     }
 
     override fun onFaceDegrees(x: Double, y: Double): Boolean {

@@ -11,36 +11,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <wee.digital.camera.widget.DetectorView
-        android:id="@+id/detectorView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPortrait"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/face2_item"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cameraView" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/viewClose"
-        style="@style/Device.Close"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/deviceTextViewMessage"
-        style="@style/Device.Message"
-        app:layout_constraintBottom_toTopOf="@+id/deviceButtonGroup"
-        app:layout_constraintEnd_toEndOf="@+id/viewClose"
-        app:layout_constraintStart_toStartOf="@+id/viewClose"
-        tools:text="Hello World !" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/deviceButtonGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/viewClose"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/viewClose">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/deviceViewStart"
@@ -52,7 +41,7 @@
             style="@style/Device.Button"
             android:text="STOP" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

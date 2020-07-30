@@ -13,6 +13,9 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.intel.realsense.librealsense.RsContext
+//import org.opencv.android.BaseLoaderCallback
+//import org.opencv.android.LoaderCallbackInterface
+//import org.opencv.android.OpenCVLoader
 
 object RealSense {
 
@@ -91,7 +94,7 @@ object RealSense {
                     }
                 }
                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                    permissionGranted()
+                    //permissionGranted()
                 }
             }
         }
@@ -156,6 +159,39 @@ object RealSense {
 
     fun hasFace() {
         realSenseControl?.hasFace()
+    }
+
+    /**
+     * OpenCV
+     */
+    @Volatile
+    var openCVInitialized: Boolean = false
+
+    @Volatile
+    private var openCVInitializing: Boolean = false
+
+    fun initOpenCV() {
+        /*if (openCVInitialized || openCVInitializing) return
+        openCVInitializing = true
+        val loaderCallback = object : BaseLoaderCallback(app.applicationContext) {
+            override fun onManagerConnected(status: Int) {
+                when (status) {
+                    LoaderCallbackInterface.SUCCESS -> {
+                        openCVInitialized = true
+                    }
+                    else -> {
+                        openCVInitialized = false
+                        super.onManagerConnected(status)
+                    }
+                }
+                openCVInitializing = false
+            }
+        }
+        if (!OpenCVLoader.initDebug()) {
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, app.applicationContext, loaderCallback)
+        } else {
+            loaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
+        }*/
     }
 
 }

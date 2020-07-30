@@ -28,10 +28,6 @@ class ModelFilter(fileName: String) {
         }
     }
 
-    fun initModel() {
-
-    }
-
     @Synchronized
     fun processImage(bitmap: Bitmap, onResult: (String?, Float) -> Unit) {
         if (isChecking) {

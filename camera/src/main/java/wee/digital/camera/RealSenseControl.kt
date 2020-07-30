@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import com.intel.realsense.librealsense.*
 
+
 /**
  * Manufacture: Intel(R) RealSense(TM) Depth Camera SR305
  * Product : Intel(R) RealSense(TM) Depth Camera SR305
@@ -29,7 +30,10 @@ class RealSenseControl {
         const val FRAME_MAX_SLEEP = -20 // Sleep 1s
     }
 
-    private var colorizer: Colorizer? = null
+    private val colorizer = Colorizer().apply {
+        setValue(Option.COLOR_SCHEME, 0f)
+    }
+    private var align: Align = Align(StreamType.COLOR)
     private var pipeline: Pipeline? = null
     private var pipelineProfile: PipelineProfile? = null
 
@@ -67,10 +71,25 @@ class RealSenseControl {
                             mFrameCount--
                             when {
                                 mFrameCount > 0 -> {
+
                                     val colorFrame: Frame = frames.first(StreamType.COLOR).releaseWith(fr)
-                                    val processFrame = frames.applyFilter(colorizer).releaseWith(fr)
-                                    val depthFrame: Frame = processFrame.first(StreamType.DEPTH).releaseWith(fr)
+                                    val depthFrame: Frame = align.process(frames)
+                                            .releaseWith(fr)
+                                            .applyFilter(colorizer)
+                                            .releaseWith(fr)
+                                            .first(StreamType.DEPTH)
+                                            .releaseWith(fr)
+
+                                    /*val depthFrame = frames
+                                            .applyFilter(colorizer)
+                                            .releaseWith(fr)
+                                            .first(StreamType.DEPTH)
+                                            .releaseWith(fr)*/
+
+
                                     frameProcessing(colorFrame, depthFrame)
+
+
                                 }
                                 mFrameCount < FRAME_MAX_SLEEP -> {
                                     //debug("Sleep $mFrameCount")
@@ -122,9 +141,7 @@ class RealSenseControl {
     }
 
     fun onCreate() {
-        colorizer = Colorizer().apply {
-            setValue(Option.COLOR_SCHEME, 0f)
-        }
+
         if (isStreaming) return
         try {
             val config = Config().apply {
@@ -151,29 +168,23 @@ class RealSenseControl {
 
     private fun frameProcessing(colorFrame: Frame, depthFrame: Frame) {
         try {
-
             ByteArray(COLOR_SIZE).also {
                 colorFrame.getData(it)
                 colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
             }
-
-            ByteArray(DEPTH_SIZE).also {
+            ByteArray(COLOR_SIZE).also {
                 depthFrame.getData(it)
-                depthBitmap = it.rgbToBitmap(DEPTH_WIDTH, DEPTH_HEIGHT)
+                depthBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
             }
-
             if (colorBitmap != null && depthBitmap != null) {
                 RealSense.imagesLiveData.postValue(Pair(colorBitmap!!, depthBitmap!!))
             }
-
             isProcessingFrame = false
-
         } catch (e: java.lang.Exception) {
             isProcessingFrame = false
-            e.printStackTrace()
         } catch (e: Throwable) {
             isProcessingFrame = false
-            e.printStackTrace()
+
         }
     }
 

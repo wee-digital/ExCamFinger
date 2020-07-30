@@ -17,6 +17,7 @@ class App : Application() {
         Library.app = this
         HeroFun.app = this
         RealSense.app = this
+        //RealSense.initOpenCV()
     }
 
     /**
@@ -25,6 +26,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         onModulesInject()
+
     }
 
     override fun onTerminate() {

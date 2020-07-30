@@ -29,28 +29,33 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewFingerprint"
                 style="@style/Settings.Item"
-                tools:text="Fingerprint usb" />
+                tools:text="Fingerprint" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewPrinter"
                 style="@style/Settings.Item"
                 android:visibility="gone"
-                tools:text="Printer usb" />
+                tools:text="Printer" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewCamera"
                 style="@style/Settings.Item"
-                tools:text="Camera usb" />
+                tools:text="Camera" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewFaceDetect"
                 style="@style/Settings.Item"
-                android:text="Face detect usb" />
+                android:text="Face detect 1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewFaceDetect2"
+                style="@style/Settings.Item"
+                android:text="Face detect 2" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewCameraFaceDetect"
                 style="@style/Settings.Item"
-                android:text="Camera face detect usb" />
+                android:text="Camera + face detect" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewDevices"
