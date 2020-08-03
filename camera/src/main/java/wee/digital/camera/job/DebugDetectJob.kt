@@ -87,13 +87,10 @@ class DebugDetectJob(private var uiListener: Listener) :
         uiCallback { onFaceDepthImage(bitmap) }
     }
 
-
-    /**
-     * [FaceDetector.StatusListener] implement
-     */
-    override fun onPortraitImage(bitmap: Bitmap) {
-        uiCallback { onPortraitImage(bitmap) }
+    override fun onPortraitImage(label: String, cropColor: Bitmap, cropDepth: Bitmap) {
+        uiCallback { onPortraitImage(label, cropColor, cropDepth) }
     }
+
 
     override fun onFaceLeaved() {
         uiCallback {

@@ -57,7 +57,7 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerView.ViewHo
 
         position.updateLastIndex()
 
-        viewHolder.itemView.setOnClickListener  {
+        viewHolder.itemView.setOnClickListener {
             onItemClick(model, position)
         }
 

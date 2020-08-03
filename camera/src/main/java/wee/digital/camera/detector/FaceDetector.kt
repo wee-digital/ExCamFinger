@@ -91,7 +91,7 @@ class FaceDetector {
         maskFilter.processImage(faceBitmap) { text, confidence ->
             text ?: return@processImage
             if (optionListener.onMaskLabel(text, confidence)) {
-                onDepthDetect(boxRect, colorBitmap, depthBitmap)
+                onDepthDetect(boxRect, faceBitmap, depthBitmap)
             }
         }
     }
@@ -100,7 +100,7 @@ class FaceDetector {
      * Detect method 3rd: use [depthFilter] crop face depth image
      * and get vision label to continue [onGetPortrait]
      */
-    private fun onDepthDetect(boxRect: Rect, colorBitmap: Bitmap, depthBitmap: Bitmap) {
+    private fun onDepthDetect(boxRect: Rect, cropColor: Bitmap, depthBitmap: Bitmap) {
 
         val faceBitmap = boxRect.cropColorFace(depthBitmap) ?: return
         dataListener?.onFaceDepthImage(faceBitmap)
@@ -108,19 +108,11 @@ class FaceDetector {
         depthFilter.processImage(faceBitmap) { text, confidence ->
             text ?: return@processImage
             if (optionListener.onDepthLabel(text, confidence)) {
-                onGetPortrait(boxRect, colorBitmap)
+                dataListener?.onPortraitImage(text, cropColor, faceBitmap)
             }
         }
     }
 
-    /**
-     * Detect method 4th: detected face portrait
-     */
-    private fun onGetPortrait(boxRect: Rect, bitmap: Bitmap) {
-        boxRect.cropPortrait(bitmap)?.also {
-            dataListener?.onPortraitImage(it)
-        }
-    }
 
     private fun faceChangeProcess(face: Box): Boolean {
         currentFace ?: return false
@@ -146,7 +138,7 @@ class FaceDetector {
 
         fun onFaceDepthImage(bitmap: Bitmap?) {}
 
-        fun onPortraitImage(bitmap: Bitmap)
+        fun onPortraitImage(label: String, cropColor: Bitmap, cropDepth: Bitmap)
     }
 
     /**

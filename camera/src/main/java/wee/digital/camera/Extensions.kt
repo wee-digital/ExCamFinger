@@ -421,6 +421,11 @@ fun Bitmap?.toBytes(): ByteArray {
     }
 }
 
+fun ByteArray?.toBitmap(): Bitmap? {
+    this ?: return null
+    return BitmapFactory.decodeByteArray(this, 0, this.size)
+}
+
 fun readAsset(filename: String): String {
     val sb = StringBuilder()
     BufferedReader(InputStreamReader(RealSense.app.assets.open(filename))).useLines { lines ->

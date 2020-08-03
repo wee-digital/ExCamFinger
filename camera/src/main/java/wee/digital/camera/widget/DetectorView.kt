@@ -80,8 +80,8 @@ class DetectorView : ConstraintLayout, DebugDetectJob.Listener {
         imageViewCropDepth.setImageBitmap(bitmap)
     }
 
-    override fun onPortraitImage(bitmap: Bitmap) {
-        imageViewPortrait?.setImageBitmap(bitmap)
+    override fun onPortraitImage(label: String, cropColor: Bitmap, depthColor: Bitmap) {
+        //imageViewPortrait?.setImageBitmap(bitmap)
     }
 
 

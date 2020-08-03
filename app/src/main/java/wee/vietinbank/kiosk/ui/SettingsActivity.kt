@@ -37,7 +37,7 @@ class SettingsActivity : BaseActivity() {
         when (view) {
             viewCamera -> add(CameraFragment(), true)
             viewFaceDetect -> add(FaceFragment(), true)
-            viewFaceDetect2 -> add(Face2Fragment(), true)
+            viewFaceDetect2 -> add(DepthFragment(), true)
             viewCameraFaceDetect -> add(CamFaceFragment(), true)
             viewPrinter -> add(PrinterFragment(), true)
             viewFingerprint -> add(FingerFragment(), true)

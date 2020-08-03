@@ -12,6 +12,9 @@ dependencies {
     implementation "com.intuit.sdp:sdp-android:$dimen_version"
     implementation "com.intuit.ssp:ssp-android:$dimen_version"
 
+    implementation "androidx.room:room-runtime:2.2.5"
+    kapt "androidx.room:room-compiler:2.2.5"
+
     // CAMERA
     implementation project(":camera")
 

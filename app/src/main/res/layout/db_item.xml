@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/_96sdp"
-    android:layout_height="@dimen/_200sdp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/_4sdp"
-    android:orientation="vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/itemImageViewPortrait"
-        android:layout_width="match_parent"
+        android:id="@+id/itemImageViewColor"
+        android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_120sdp"
-        android:layout_gravity="center_vertical"
+        tools:src="@tools:sample/avatars" />
+
+    <androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/itemImageViewDepth"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_120sdp"
         tools:src="@tools:sample/avatars" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/itemTextViewDepth"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_32sdp"
+        android:layout_marginStart="@dimen/mediumMargin"
         android:text="..."
         android:textAllCaps="true"
         android:textColor="@android:color/holo_green_light"
         android:textSize="@dimen/_24ssp"
         android:textStyle="bold" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/itemTextViewTime"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_32sdp"
-        android:text="..."
-        android:textSize="@dimen/_12ssp" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

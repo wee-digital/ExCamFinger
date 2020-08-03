@@ -41,6 +41,11 @@
             style="@style/Device.Button"
             android:text="STOP" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/viewDB"
+            style="@style/Device.Button"
+            android:text="DB" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

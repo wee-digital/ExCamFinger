@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.lifecycle.*
 import wee.digital.camera.RealSense
 import wee.digital.camera.detector.FaceDetector
-import wee.digital.camera.toBytes
 import wee.digital.camera.uiThread
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -21,7 +20,7 @@ class FaceDetectJob(private var uiListener: Listener) :
 
     private val invalidFaceCount = AtomicInteger()
 
-    private var hasDetect: Boolean = false
+    var hasDetect: Boolean = false
 
     private val detector: FaceDetector = FaceDetector().also {
         it.dataListener = this
@@ -116,11 +115,11 @@ class FaceDetectJob(private var uiListener: Listener) :
     /**
      *  [FaceDetector.DataListener] implement
      */
-    override fun onPortraitImage(bitmap: Bitmap) {
+    override fun onPortraitImage(label: String, cropColor: Bitmap, cropDepth: Bitmap) {
         if (!hasDetect) return
         noneFaceCount.set(0)
         uiThread {
-            uiListener.onFaceDetected(bitmap)
+            uiListener.onFaceDetected(label, cropColor, cropDepth)
         }
     }
 
@@ -143,7 +142,7 @@ class FaceDetectJob(private var uiListener: Listener) :
      */
     interface Listener {
 
-        fun onFaceDetected(bitmap: Bitmap)
+        fun onFaceDetected(label: String, cropColor: Bitmap, cropDepth: Bitmap)
 
         fun onFaceLeaved()
 
