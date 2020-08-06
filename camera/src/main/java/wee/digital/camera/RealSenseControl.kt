@@ -79,17 +79,7 @@ class RealSenseControl {
                                             .releaseWith(fr)
                                             .first(StreamType.DEPTH)
                                             .releaseWith(fr)
-
-                                    /*val depthFrame = frames
-                                            .applyFilter(colorizer)
-                                            .releaseWith(fr)
-                                            .first(StreamType.DEPTH)
-                                            .releaseWith(fr)*/
-
-
                                     frameProcessing(colorFrame, depthFrame)
-
-
                                 }
                                 mFrameCount < FRAME_MAX_SLEEP -> {
                                     //debug("Sleep $mFrameCount")

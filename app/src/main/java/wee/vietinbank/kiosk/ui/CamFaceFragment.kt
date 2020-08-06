@@ -9,7 +9,6 @@ import wee.vietinbank.kiosk.base.BaseFragment
 
 class CamFaceFragment : BaseFragment() {
 
-
     override val layoutResourceId: Int = R.layout.camera_face
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

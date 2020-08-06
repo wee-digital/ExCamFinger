@@ -23,7 +23,7 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addClickListener(viewCamera, viewFaceDetect, viewFaceDetect2, viewCameraFaceDetect,
+        addClickListener(viewCamera, viewFaceDetect, viewCameraFaceDetect,
                 viewPrinter, viewFingerprint, viewDevices)
 
         UsbLiveData.builder(this)
@@ -31,13 +31,14 @@ class SettingsActivity : BaseActivity() {
                 .observe {
                     onUsbReceiver(it)
                 }
+        add(OpenGLFragment(), true)
     }
 
     override fun onViewClick(view: View) {
         when (view) {
             viewCamera -> add(CameraFragment(), true)
+            viewOpenGL -> add(OpenGLFragment(), true)
             viewFaceDetect -> add(FaceFragment(), true)
-            viewFaceDetect2 -> add(DepthFragment(), true)
             viewCameraFaceDetect -> add(CamFaceFragment(), true)
             viewPrinter -> add(PrinterFragment(), true)
             viewFingerprint -> add(FingerFragment(), true)

@@ -22,35 +22,33 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/viewDevicesTitle"
-                style="@style/Settings.Title"
-                android:text="DEVICES" />
+                android:id="@+id/viewDevices"
+                style="@style/Settings.Item"
+                tools:text="Devices" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewFingerprint"
                 style="@style/Settings.Item"
+                android:layout_marginTop="@dimen/_20sdp"
                 tools:text="Fingerprint" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewPrinter"
                 style="@style/Settings.Item"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:visibility="gone"
                 tools:text="Printer" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewCamera"
                 style="@style/Settings.Item"
+                android:layout_marginTop="@dimen/_20sdp"
                 tools:text="Camera" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewFaceDetect"
                 style="@style/Settings.Item"
-                android:text="Face detect 1" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/viewFaceDetect2"
-                style="@style/Settings.Item"
-                android:text="Face detect 2" />
+                android:text="Face detect" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewCameraFaceDetect"
@@ -58,9 +56,10 @@
                 android:text="Camera + face detect" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/viewDevices"
+                android:id="@+id/viewOpenGL"
                 style="@style/Settings.Item"
-                tools:text="Devices" />
+                android:layout_marginTop="@dimen/_20sdp"
+                tools:text="OpenGL" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

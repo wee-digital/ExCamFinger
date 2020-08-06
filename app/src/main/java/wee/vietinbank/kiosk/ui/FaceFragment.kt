@@ -9,7 +9,6 @@ import wee.vietinbank.kiosk.base.BaseFragment
 
 class FaceFragment : BaseFragment() {
 
-
     override val layoutResourceId: Int = R.layout.face
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -26,7 +26,6 @@ interface BaseView : LifecycleOwner {
     }
 
 
-
     /**
      * Fragment utilities
      */
