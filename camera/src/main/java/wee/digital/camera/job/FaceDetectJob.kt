@@ -115,11 +115,11 @@ class FaceDetectJob(private var uiListener: Listener) :
     /**
      *  [FaceDetector.DataListener] implement
      */
-    override fun onPortraitImage(label: String, cropColor: Bitmap, cropDepth: Bitmap) {
+    override fun onPortraitImage(bitmap: Bitmap) {
         if (!hasDetect) return
         noneFaceCount.set(0)
         uiThread {
-            uiListener.onFaceDetected(label, cropColor, cropDepth)
+            uiListener.onFaceDetected(bitmap)
         }
     }
 
@@ -142,7 +142,7 @@ class FaceDetectJob(private var uiListener: Listener) :
      */
     interface Listener {
 
-        fun onFaceDetected(label: String, cropColor: Bitmap, cropDepth: Bitmap)
+        fun onFaceDetected(bitmap: Bitmap)
 
         fun onFaceLeaved()
 

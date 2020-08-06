@@ -29,14 +29,13 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         addClickListener(viewCamera, viewFaceDetect, viewCameraFaceDetect,
-                viewPrinter, viewFingerprint, viewDevices)
+                viewPrinter, viewFingerprint, viewDevices, viewOpenGL)
 
         UsbLiveData.builder(this)
                 .devices(RealSense.VENDOR_ID, Cashino.VENDOR_ID, HeroFun.VENDOR_ID)
                 .observe {
                     onUsbReceiver(it)
                 }
-        add(OpenGLFragment(), true)
     }
 
     override fun onViewClick(view: View) {

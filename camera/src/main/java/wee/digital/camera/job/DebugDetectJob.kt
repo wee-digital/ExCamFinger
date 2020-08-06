@@ -52,12 +52,12 @@ class DebugDetectJob(private var uiListener: Listener) :
      */
     override fun onMaskLabel(label: String, confidence: Float): Boolean {
         uiCallback { onMaskLabel(label, confidence) }
-        return true
+        return super.onMaskLabel(label, confidence)
     }
 
     override fun onDepthLabel(label: String, confidence: Float): Boolean {
         uiCallback { onDepthLabel(label, confidence) }
-        return true
+        return super.onDepthLabel(label, confidence)
     }
 
     override fun onFaceScore(score: Float): Boolean {
@@ -87,8 +87,8 @@ class DebugDetectJob(private var uiListener: Listener) :
         uiCallback { onFaceDepthImage(bitmap) }
     }
 
-    override fun onPortraitImage(label: String, cropColor: Bitmap, cropDepth: Bitmap) {
-        uiCallback { onPortraitImage(label, cropColor, cropDepth) }
+    override fun onPortraitImage(bitmap: Bitmap) {
+        uiCallback { onPortraitImage(bitmap) }
     }
 
 

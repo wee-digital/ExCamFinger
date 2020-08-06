@@ -108,7 +108,7 @@ class FaceDetector {
         depthFilter.processImage(faceBitmap) { text, confidence ->
             text ?: return@processImage
             if (optionListener.onDepthLabel(text, confidence)) {
-                dataListener?.onPortraitImage(text, cropColor, faceBitmap)
+                dataListener?.onPortraitImage(cropColor)
             }
         }
     }
@@ -138,7 +138,7 @@ class FaceDetector {
 
         fun onFaceDepthImage(bitmap: Bitmap?) {}
 
-        fun onPortraitImage(label: String, cropColor: Bitmap, cropDepth: Bitmap)
+        fun onPortraitImage(bitmap: Bitmap)
     }
 
     /**
