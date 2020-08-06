@@ -36,17 +36,15 @@ class OverlayRenderer : GLSurfaceView.Renderer {
         private const val Z_FAR = 40f
         private const val TAG = "myRenderer"
 
-        ///
-        // Create a shader object, load the shader source, and
-        // compile the shader.
-        //
+        /**
+         * Create a shader object, load the shader source, an compile the shader.
+         */
         @JvmStatic
-        fun LoadShader(type: Int, shaderSrc: String?): Int {
-            val shader: Int
+        fun loadShader(type: Int, shaderSrc: String?): Int {
             val compiled = IntArray(1)
 
             // Create the shader object
-            shader = GLES31.glCreateShader(type)
+            val shader: Int = GLES31.glCreateShader(type)
             if (shader == 0) {
                 return 0
             }

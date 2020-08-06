@@ -1,6 +1,17 @@
 package wee.vietinbank.kiosk.gl3
 
+import android.app.ActivityManager
+import android.content.Context
 import android.graphics.Color
+import android.renderscript.Int3
+import wee.vietinbank.kiosk.App
+
+val hasOpenGLES30: Boolean
+    get() {
+        val am = App.instance.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val info = am.deviceConfigurationInfo
+        return info.reqGlEsVersion >= 0x30000
+    }
 
 val GL_RED = floatArrayOf(
         Color.red(Color.RED) / 255f,
@@ -43,3 +54,15 @@ val GL_GRAY = floatArrayOf(
         Color.blue(Color.GRAY) / 255f,
         1.0f
 )
+
+val pyramidPoints: List<Int3>
+    get() {
+        val arr = mutableListOf<Int3>()
+        for (x in 0..9) {
+            for (y in 0..9) {
+                val z = x + y
+                arr.add(Int3(x, y, z))
+            }
+        }
+        return arr
+    }

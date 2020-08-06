@@ -2,7 +2,7 @@ package wee.vietinbank.kiosk.gl3
 
 import android.opengl.GLES31
 import android.util.Log
-import wee.vietinbank.kiosk.gl3.OverlayRenderer.Companion.LoadShader
+import wee.vietinbank.kiosk.gl3.OverlayRenderer.Companion.loadShader
 import wee.vietinbank.kiosk.gl3.OverlayRenderer.Companion.checkGlError
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -124,8 +124,8 @@ class Cube {
         val linked = IntArray(1)
 
         // Load the vertex/fragment shaders
-        val vertexShader: Int = LoadShader(GLES31.GL_VERTEX_SHADER, VERTEX_SHADER_CODE)
-        val fragmentShader: Int = LoadShader(GLES31.GL_FRAGMENT_SHADER, FRAGMENT_SHADER_CODE)
+        val vertexShader: Int = loadShader(GLES31.GL_VERTEX_SHADER, VERTEX_SHADER_CODE)
+        val fragmentShader: Int = loadShader(GLES31.GL_FRAGMENT_SHADER, FRAGMENT_SHADER_CODE)
 
         // Create the program object
         val iProgram: Int = GLES31.glCreateProgram()

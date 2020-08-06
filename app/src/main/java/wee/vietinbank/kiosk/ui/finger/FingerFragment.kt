@@ -1,4 +1,4 @@
-package wee.vietinbank.kiosk.ui
+package wee.vietinbank.kiosk.ui.finger
 
 import android.os.Bundle
 import android.view.View

@@ -1,4 +1,4 @@
-package wee.vietinbank.kiosk.ui
+package wee.vietinbank.kiosk.ui.printer
 
 import android.graphics.Bitmap
 import android.graphics.Canvas

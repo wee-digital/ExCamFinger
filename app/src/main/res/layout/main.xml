@@ -59,7 +59,7 @@
                 android:id="@+id/viewOpenGL"
                 style="@style/Settings.Item"
                 android:layout_marginTop="@dimen/_20sdp"
-                tools:text="OpenGL" />
+                android:text="OpenGL" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

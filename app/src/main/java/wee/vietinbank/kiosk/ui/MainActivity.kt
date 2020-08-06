@@ -3,7 +3,7 @@ package wee.vietinbank.kiosk.ui
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import kotlinx.android.synthetic.main.settings.*
+import kotlinx.android.synthetic.main.main.*
 import wee.digital.camera.RealSense
 import wee.digital.finger.HeroFun
 import wee.digital.library.usb.Usb
@@ -12,11 +12,16 @@ import wee.digital.library.usb.UsbLiveData
 import wee.vietinbank.kiosk.R
 import wee.vietinbank.kiosk.base.BaseActivity
 import wee.vietinbank.kiosk.io.Cashino
+import wee.vietinbank.kiosk.ui.camera.CamFaceFragment
+import wee.vietinbank.kiosk.ui.camera.CameraFragment
+import wee.vietinbank.kiosk.ui.camera.FaceFragment
+import wee.vietinbank.kiosk.ui.finger.FingerFragment
+import wee.vietinbank.kiosk.ui.printer.PrinterFragment
 
 
-class SettingsActivity : BaseActivity() {
+class MainActivity : BaseActivity() {
 
-    override val layoutResourceId: Int = R.layout.settings
+    override val layoutResourceId: Int = R.layout.main
 
     override val fragmentContainerId: Int = R.id.viewContainer
 
