@@ -18,7 +18,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
 
     private val rotationMatrix = FloatArray(16)
 
-    private var drawObj : Cube? = null
+    private var drawObj : Obj? = null
 
     private var width = 0
 
@@ -96,7 +96,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
         //set the clear buffer color to light gray.
         GLES31.glClearColor(0f, 0f, 0f, 1f)
         //initialize the cube code for drawing.
-        drawObj = Cube()
+        drawObj = Obj()
         //if we had other objects setup them up here as well.
     }
 
