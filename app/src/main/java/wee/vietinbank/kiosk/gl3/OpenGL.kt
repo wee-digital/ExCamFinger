@@ -55,14 +55,16 @@ val GL_GRAY = floatArrayOf(
         1.0f
 )
 
-val pyramidPoints: List<Int3>
+val pyramidPoints: FloatArray
     get() {
-        val arr = mutableListOf<Int3>()
+        val arr = mutableListOf<Float>()
         for (x in 0..9) {
             for (y in 0..9) {
-                val z = x + y
-                arr.add(Int3(x, y, z))
+                val z = (x + y) / 2
+                arr.add(x.toFloat())
+                arr.add(y.toFloat())
+                arr.add(z.toFloat())
             }
         }
-        return arr
+        return arr.toFloatArray()
     }

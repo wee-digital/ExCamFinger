@@ -18,7 +18,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
 
     private val rotationMatrix = FloatArray(16)
 
-    private var cube: Cube? = null
+    private var drawObj : Cube? = null
 
     private var width = 0
 
@@ -96,7 +96,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
         //set the clear buffer color to light gray.
         GLES31.glClearColor(0f, 0f, 0f, 1f)
         //initialize the cube code for drawing.
-        cube = Cube()
+        drawObj = Cube()
         //if we had other objects setup them up here as well.
     }
 
@@ -126,7 +126,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
 
         // combine the model-view with the projection matrix
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0)
-        cube!!.draw(mvpMatrix)
+        drawObj?.draw(mvpMatrix)
 
         //change the angle, so the cube will spin.
         angle += .1f
