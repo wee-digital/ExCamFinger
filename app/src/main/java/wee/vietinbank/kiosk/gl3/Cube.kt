@@ -170,14 +170,14 @@ class Cube {
         // Apply the projection and view transformation
         GLES31.glUniformMatrix4fv(mvpMatrixHandle, 1, false, mvpMatrix, 0)
         checkGlError("glUniformMatrix4fv")
-        val VERTEX_POS_INDX = 0
-        vertices.position(VERTEX_POS_INDX) //just in case.  We did it already though.
+        val vertexPosIndex = 0
+        vertices.position(vertexPosIndex) //just in case.  We did it already though.
 
         //add all the points to the space, so they can be correct by the transformations.
         //would need to do this even if there were no transformations actually.
-        GLES31.glVertexAttribPointer(VERTEX_POS_INDX, 3, GLES31.GL_FLOAT,
+        GLES31.glVertexAttribPointer(vertexPosIndex, 3, GLES31.GL_FLOAT,
                 false, 0, vertices)
-        GLES31.glEnableVertexAttribArray(VERTEX_POS_INDX)
+        GLES31.glEnableVertexAttribArray(vertexPosIndex)
 
         //Now we are ready to draw the cube finally.
         var startPos = 0
