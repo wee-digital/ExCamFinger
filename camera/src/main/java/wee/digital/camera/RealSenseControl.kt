@@ -66,35 +66,32 @@ class RealSenseControl {
                             true
                         }
                         isProcessingFrame = true
-                        val frames: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
-                        if (isFrameOK) {
-                            mFrameCount--
-                            when {
-                                mFrameCount > 0 -> {
-
-                                    val colorFrame: Frame = frames.first(StreamType.COLOR).releaseWith(fr)
-                                    val depthFrame: Frame = align.process(frames)
-                                            .releaseWith(fr)
-                                            .applyFilter(colorizer)
-                                            .releaseWith(fr)
-                                            .first(StreamType.DEPTH)
-                                            .releaseWith(fr)
-                                    frameProcessing(colorFrame, depthFrame)
-                                }
-                                mFrameCount < FRAME_MAX_SLEEP -> {
-                                    //debug("Sleep $mFrameCount")
-                                    mFrameCount = FRAME_MAX_COUNT
-                                    isProcessingFrame = false
-
-                                }
-                                else -> {
-                                    isProcessingFrame = false
-                                }
-                            }
-                        } else {
+                        if (!isFrameOK) {
                             isFrameOK = true
                             isProcessingFrame = false
-                            debug("FrameOK....")
+                            isSleep = false
+                            true
+                        }
+                        mFrameCount--
+                        val frames: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
+                        when {
+                            mFrameCount > 0 -> {
+                                val colorFrame: Frame = frames.first(StreamType.COLOR).releaseWith(fr)
+                                val depthFrame: Frame = align.process(frames)
+                                        .releaseWith(fr)
+                                        .applyFilter(colorizer)
+                                        .releaseWith(fr)
+                                        .first(StreamType.DEPTH)
+                                        .releaseWith(fr)
+                                frameProcessing(colorFrame, depthFrame)
+                            }
+                            mFrameCount < FRAME_MAX_SLEEP -> {
+                                mFrameCount = FRAME_MAX_COUNT
+                                isProcessingFrame = false
+                            }
+                            else -> {
+                                isProcessingFrame = false
+                            }
                         }
                         isSleep = false
                         true
@@ -104,6 +101,7 @@ class RealSenseControl {
                         false
                     }
                 }
+                
             } catch (e: Exception) {
                 debug("streaming, error: " + e.message)
                 false
