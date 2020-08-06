@@ -53,9 +53,9 @@ class RealSenseControl {
     private var mHandler: Handler? = null
     private val streamRunnable: Runnable = object : Runnable {
         override fun run() {
+
             val isNext = try {
                 FrameReleaser().use { fr ->
-                    try {
                         if (!RealSense.imagesLiveData.hasObservers()) {
                             RealSense.imagesLiveData.postValue(null)
                             isSleep = true
@@ -73,17 +73,11 @@ class RealSenseControl {
                             true
                         }
                         mFrameCount--
-                        val frames: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
+                    val frameSet: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
                         when {
                             mFrameCount > 0 -> {
-                                val colorFrame: Frame = frames.first(StreamType.COLOR).releaseWith(fr)
-                                val depthFrame: Frame = align.process(frames)
-                                        .releaseWith(fr)
-                                        .applyFilter(colorizer)
-                                        .releaseWith(fr)
-                                        .first(StreamType.DEPTH)
-                                        .releaseWith(fr)
-                                frameProcessing(colorFrame, depthFrame)
+                                framesProcessing(frameSet, fr)
+                                //depthProcessing(frameSet, fr)
                             }
                             mFrameCount < FRAME_MAX_SLEEP -> {
                                 mFrameCount = FRAME_MAX_COUNT
@@ -93,17 +87,13 @@ class RealSenseControl {
                                 isProcessingFrame = false
                             }
                         }
-                        isSleep = false
-                        true
-                    } catch (e: Throwable) {
-                        debug("FrameReleaser ${e.message}")
-                        isProcessingFrame = false
-                        false
-                    }
+                    isSleep = false
+                    isProcessingFrame = false
+                    true
                 }
-                
             } catch (e: Exception) {
                 debug("streaming, error: " + e.message)
+                isProcessingFrame = false
                 false
             }
 
@@ -115,7 +105,6 @@ class RealSenseControl {
                 }
             } else {
                 isFrameOK = false
-                // stopStreamThread()
                 hardwareReset()
             }
         }
@@ -154,27 +143,38 @@ class RealSenseControl {
         pipeline?.stop()
     }
 
-    private fun frameProcessing(colorFrame: Frame, depthFrame: Frame) {
-        try {
-            ByteArray(COLOR_SIZE).also {
-                colorFrame.getData(it)
-                colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
-            }
-            ByteArray(COLOR_SIZE).also {
-                depthFrame.getData(it)
-                depthBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
-            }
-            if (colorBitmap != null && depthBitmap != null) {
-                RealSense.imagesLiveData.postValue(Pair(colorBitmap!!, depthBitmap!!))
-            }
-            isProcessingFrame = false
-        } catch (e: java.lang.Exception) {
-            isProcessingFrame = false
-        } catch (e: Throwable) {
-            isProcessingFrame = false
-
+    private fun framesProcessing(frameSet: FrameSet, fr: FrameReleaser) {
+        val colorFrame: Frame = frameSet.first(StreamType.COLOR).releaseWith(fr)
+        val depthFrame: Frame = align.process(frameSet)
+                .releaseWith(fr)
+                .applyFilter(colorizer)
+                .releaseWith(fr)
+                .first(StreamType.DEPTH)
+                .releaseWith(fr)
+        ByteArray(COLOR_SIZE).also {
+            colorFrame.getData(it)
+            colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
+        }
+        ByteArray(COLOR_SIZE).also {
+            depthFrame.getData(it)
+            depthBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
+        }
+        if (colorBitmap != null && depthBitmap != null) {
+            RealSense.imagesLiveData.postValue(Pair(colorBitmap!!, depthBitmap!!))
         }
     }
+
+    private fun depthProcessing(frameSet: FrameSet, fr: FrameReleaser) {
+        val depthFrame: Frame = align.process(frameSet)
+                .releaseWith(fr)
+                .applyFilter(colorizer)
+                .releaseWith(fr)
+                .first(StreamType.DEPTH)
+                .releaseWith(fr)
+        val d = depthFrame.`as`<DepthFrame>(Extension.DEPTH_FRAME)
+        debug(d.getDistance(COLOR_WIDTH / 2, COLOR_HEIGHT / 2))
+    }
+
 
     fun hasFace() {
         mFrameCount = FRAME_MAX_COUNT

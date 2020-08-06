@@ -18,7 +18,7 @@ import kotlin.math.*
 
 
 fun debug(s: Any?) {
-    if (BuildConfig.DEBUG) Log.d("Camera", s.toString())
+    if (BuildConfig.DEBUG) Log.d("RealSense", s.toString())
 }
 
 val uiHandler: Handler get() = Handler(Looper.getMainLooper())
