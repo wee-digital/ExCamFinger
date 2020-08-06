@@ -1,34 +1,34 @@
 package wee.vietinbank.kiosk.gl3
 
-import android.opengl.GLES20
 import android.opengl.GLES31
 import java.nio.FloatBuffer
-import java.nio.IntBuffer
 
 class Straight {
 
     companion object {
 
-        private const val VERTICES_PER_POINT = 3
+        private const val COORDINATES_PER_VERTEX = 3
 
         private const val VERTEX_SHADER_CODE = """
-            attribute vec4 vPosition;
-            void main(void) {
-                gl_Position = vPosition;
+            #version 300 es
+            uniform mat4 uMVPMatrix;
+            in vec4 vPosition;
+            void main() {
+               gl_Position = uMVPMatrix * vPosition;
             }
         """
 
         private const val FRAGMENT_SHADER_CODE = """
+            #version 300 es
             precision mediump float;
+            uniform vec4 vColor;
+            out vec4 fragColor;
             void main() {
-                gl_FragColor = vec4(1, 1, 1, 1);
+              fragColor = vColor;
             }
         """
 
     }
-
-    var size = 0.4f
-
     // this is the initial data, which will need to translated into the mVertices variable in the consturctor.
     private val verticesBuffer: FloatBuffer
 
@@ -36,11 +36,9 @@ class Straight {
 
     private var programHandle: Int = 0
 
-    private var vertexBufferId: Int = 0
+    private var mvpMatrixHandle: Int = 0
 
-    private var vertexCount: Int = 0
-
-    private var vertexStride: Int = 0
+    private var colorHandle: Int = 0
 
     init {
         //first setup the mVertices correctly.
@@ -70,22 +68,24 @@ class Straight {
         // Bind vPosition to attribute 0
         GLES31.glBindAttribLocation(programHandle, 0, "vPosition")
 
-        // Link the program
         GLES31.glLinkProgram(programHandle)
-
-        val buffer = IntBuffer.allocate(1)
-        GLES31.glGenBuffers(1, buffer)
-        vertexBufferId = buffer[0]
-        GLES31.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferId)
-        GLES31.glBufferData(GLES20.GL_ARRAY_BUFFER, verticesData.size * 4, verticesBuffer, GLES31.GL_STATIC_DRAW)
-        vertexCount = verticesData.size / VERTICES_PER_POINT
-        vertexStride = VERTICES_PER_POINT * 4 // 4 bytes per vertex
     }
 
     fun draw(mvpMatrix: FloatArray?) {
 
         // Use the program object
         GLES31.glUseProgram(programHandle)
+
+        // get handle to shape's transformation matrix
+        mvpMatrixHandle = GLES31.glGetUniformLocation(programHandle, "uMVPMatrix")
+        checkGlError("glGetUniformLocation")
+
+        // get handle to fragment shader's vColor member
+        colorHandle = GLES31.glGetUniformLocation(programHandle, "vColor")
+
+        // Apply the projection and view transformation
+        GLES31.glUniformMatrix4fv(mvpMatrixHandle, 1, false, mvpMatrix, 0)
+        checkGlError("glUniformMatrix4fv")
 
         // Enable vertex
         val vertexPosIndex = 0
@@ -102,9 +102,15 @@ class Straight {
         )
         GLES31.glEnableVertexAttribArray(vertexPosIndex)
 
+        val vertexCount = verticesData.size / COORDINATES_PER_VERTEX
+        onDraw(vertexCount)
+    }
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferId)
-        GLES20.glDrawArrays(GLES20.GL_LINES, 0, vertexCount)
+    private fun onDraw(vertexCount: Int) {
+        GLES31.glUniform4fv(colorHandle, 1, GL_WHITE, 0)
+        GLES31.glDrawArrays(GLES31.GL_LINES, 0, vertexCount)
+
+
     }
 
 }

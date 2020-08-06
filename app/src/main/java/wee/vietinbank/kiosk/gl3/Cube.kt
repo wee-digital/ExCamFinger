@@ -30,7 +30,7 @@ class Cube {
 
     }
 
-    var size = 0.4f
+    var size = 0.5f
 
     private val verticesBuffer: FloatBuffer
 
@@ -189,7 +189,6 @@ class Cube {
     }
 
     private fun onDraw() {
-        //Now we are ready to draw the cube finally.
         var startPos = 0
 
         //draw front face
