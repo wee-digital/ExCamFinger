@@ -18,7 +18,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
 
     private val rotationMatrix = FloatArray(16)
 
-    private var drawObj : Obj? = null
+    private var drawObj : Straight? = null
 
     private var width = 0
 
@@ -31,64 +31,6 @@ class OverlayRenderer : GLSurfaceView.Renderer {
 
     var x = 0f
 
-    companion object {
-        private const val Z_NEAR = 1f
-        private const val Z_FAR = 40f
-        private const val TAG = "myRenderer"
-
-        /**
-         * Create a shader object, load the shader source, an compile the shader.
-         */
-        @JvmStatic
-        fun loadShader(type: Int, shaderSrc: String?): Int {
-            val compiled = IntArray(1)
-
-            // Create the shader object
-            val shader: Int = GLES31.glCreateShader(type)
-            if (shader == 0) {
-                return 0
-            }
-
-            // Load the shader source
-            GLES31.glShaderSource(shader, shaderSrc)
-
-            // Compile the shader
-            GLES31.glCompileShader(shader)
-
-            // Check the compile status
-            GLES31.glGetShaderiv(shader, GLES31.GL_COMPILE_STATUS, compiled, 0)
-            if (compiled[0] == 0) {
-                Log.e(TAG, "Erorr!!!!")
-                Log.e(TAG, GLES31.glGetShaderInfoLog(shader))
-                GLES31.glDeleteShader(shader)
-                return 0
-            }
-            return shader
-        }
-
-        /**
-         * Utility method for debugging OpenGL calls. Provide the name of the call
-         * just after making it:
-         *
-         * <pre>
-         * mColorHandle = GLES31.glGetUniformLocation(mProgram, "vColor");
-         * MyGLRenderer.checkGlError("glGetUniformLocation");</pre>
-         *
-         *
-         * If the operation is not successful, the check throws an error.
-         *
-         * @param glOperation - Name of the OpenGL call to check.
-         */
-        @JvmStatic
-        fun checkGlError(glOperation: String) {
-            var error: Int
-            while (GLES31.glGetError().also { error = it } != GLES31.GL_NO_ERROR) {
-                Log.e(TAG, "$glOperation: glError $error")
-                throw RuntimeException("$glOperation: glError $error")
-            }
-        }
-    }
-
     /**
      * [GLSurfaceView.Renderer] implement
      */
@@ -96,7 +38,7 @@ class OverlayRenderer : GLSurfaceView.Renderer {
         //set the clear buffer color to light gray.
         GLES31.glClearColor(0f, 0f, 0f, 1f)
         //initialize the cube code for drawing.
-        drawObj = Obj()
+        drawObj = Straight()
         //if we had other objects setup them up here as well.
     }
 
