@@ -32,8 +32,8 @@ class CameraView : ConstraintLayout {
         LayoutInflater.from(context).inflate(R.layout.widget_camera_view, this)
         ConstraintSet().apply {
             clone(viewPreview)
-            setDimensionRatio(imageViewColor.id, "H,${RealSenseControl.COLOR_WIDTH}:${RealSenseControl.COLOR_HEIGHT}")
-            setDimensionRatio(imageViewDepth.id, "H,${RealSenseControl.DEPTH_WIDTH}:${RealSenseControl.DEPTH_HEIGHT}")
+            setDimensionRatio(imageViewColor.id, "H,${RealSenseControl.VIDEO_WIDTH}:${RealSenseControl.VIDEO_HEIGHT}")
+            setDimensionRatio(imageViewDepth.id, "H,${RealSenseControl.COLOR_WIDTH}:${RealSenseControl.COLOR_HEIGHT}")
             applyTo(viewPreview)
         }
     }
@@ -64,14 +64,14 @@ class CameraView : ConstraintLayout {
                     ConstraintSet.START,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.START,
-                    viewPreview.width * left / RealSenseControl.COLOR_WIDTH
+                    viewPreview.width * left / RealSenseControl.VIDEO_WIDTH
             )
             connect(
                     imageViewCensored.id,
                     ConstraintSet.END,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.END,
-                    viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
+                    viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.VIDEO_WIDTH)
             )
 
             connect(
@@ -79,14 +79,14 @@ class CameraView : ConstraintLayout {
                     ConstraintSet.TOP,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.TOP,
-                    viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
+                    viewPreview.height * top / RealSenseControl.VIDEO_HEIGHT
             )
             connect(
                     imageViewCensored.id,
                     ConstraintSet.BOTTOM,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.BOTTOM,
-                    viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
+                    viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.VIDEO_HEIGHT)
             )
             applyTo(viewPreview)
         }

@@ -209,7 +209,7 @@ fun Rect.cropColorFace(bitmap: Bitmap): Bitmap? {
  * @this: box.transformToRect
  */
 fun Rect.cropDepthFace(bitmap: Bitmap): Bitmap? {
-    val rect = when (RealSenseControl.COLOR_WIDTH) {
+    val rect = when (RealSenseControl.VIDEO_WIDTH) {
         1920 -> this.getFace1920x1080()
         1280 -> this.getFace1280x720()
         else -> this.getFace640x480()
