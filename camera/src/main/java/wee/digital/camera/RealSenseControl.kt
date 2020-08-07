@@ -28,6 +28,7 @@ class RealSenseControl {
         const val FRAME_RATE = 10
         const val FRAME_MAX_COUNT = 200 // Run 10s
         const val FRAME_MAX_SLEEP = -20 // Sleep 1s
+
     }
 
     private val colorizer = Colorizer().apply {
@@ -53,59 +54,60 @@ class RealSenseControl {
     private var mHandler: Handler? = null
     private val streamRunnable: Runnable = object : Runnable {
         override fun run() {
-
-            val isNext = try {
+            var isNext = false
+            try {
                 FrameReleaser().use { fr ->
-                        if (!RealSense.imagesLiveData.hasObservers()) {
-                            RealSense.imagesLiveData.postValue(null)
-                            isSleep = true
-                            true
-                        }
-                        if (isPauseCamera || isProcessingFrame) {
-                            isSleep = true
-                            true
-                        }
-                        isProcessingFrame = true
-                        if (!isFrameOK) {
-                            isFrameOK = true
-                            isProcessingFrame = false
-                            isSleep = false
-                            true
-                        }
-                        mFrameCount--
+                    if (!RealSense.imagesLiveData.hasObservers()) {
+                        RealSense.imagesLiveData.postValue(null)
+                        isSleep = true
+                        true
+                    }
+                    if (isPauseCamera || isProcessingFrame) {
+                        isSleep = true
+                        true
+                    }
+                    isProcessingFrame = true
+                    if (!isFrameOK) {
+                        isFrameOK = true
+                        isProcessingFrame = false
+                        isSleep = false
+                        true
+                    }
+                    mFrameCount--
                     val frameSet: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
-                        when {
-                            mFrameCount > 0 -> {
-                                framesProcessing(frameSet, fr)
-                                //depthProcessing(frameSet, fr)
-                            }
-                            mFrameCount < FRAME_MAX_SLEEP -> {
-                                mFrameCount = FRAME_MAX_COUNT
-                                isProcessingFrame = false
-                            }
-                            else -> {
-                                isProcessingFrame = false
-                            }
+                    when {
+                        mFrameCount > 0 -> {
+                            fr.releaseData(frameSet)
+                            //fr.releaseDepthData(frameSet)
                         }
+                        mFrameCount < FRAME_MAX_SLEEP -> {
+                            mFrameCount = FRAME_MAX_COUNT
+                            isProcessingFrame = false
+                        }
+                        else -> {
+                            isProcessingFrame = false
+                        }
+                    }
                     isSleep = false
                     isProcessingFrame = false
-                    true
+                    isNext = true
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 debug("streaming, error: " + e.message)
                 isProcessingFrame = false
-                false
             }
 
-            if (isNext) {
-                if (!isSleep) {
-                    mHandler?.post(this)
-                } else {
-                    mHandler?.postDelayed(this, 80)
-                }
-            } else {
+            if (!isNext) {
                 isFrameOK = false
                 hardwareReset()
+                Handler().postDelayed({ onCreate() }, 3000)
+                return
+            }
+
+            if (!isSleep) {
+                mHandler?.post(this)
+            } else {
+                mHandler?.postDelayed(this, 80)
             }
         }
     }
@@ -143,14 +145,17 @@ class RealSenseControl {
         pipeline?.stop()
     }
 
-    private fun framesProcessing(frameSet: FrameSet, fr: FrameReleaser) {
-        val colorFrame: Frame = frameSet.first(StreamType.COLOR).releaseWith(fr)
+    private fun FrameReleaser.releaseData(frameSet: FrameSet) {
+
+        val colorFrame: Frame = frameSet.first(StreamType.COLOR).releaseWith(this)
+
         val depthFrame: Frame = align.process(frameSet)
-                .releaseWith(fr)
+                .releaseWith(this)
                 .applyFilter(colorizer)
-                .releaseWith(fr)
+                .releaseWith(this)
                 .first(StreamType.DEPTH)
-                .releaseWith(fr)
+                .releaseWith(this)
+
         ByteArray(COLOR_SIZE).also {
             colorFrame.getData(it)
             colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
@@ -164,17 +169,13 @@ class RealSenseControl {
         }
     }
 
-    private fun depthProcessing(frameSet: FrameSet, fr: FrameReleaser) {
-        val depthFrame: Frame = align.process(frameSet)
-                .releaseWith(fr)
-                .applyFilter(colorizer)
-                .releaseWith(fr)
+    private fun FrameReleaser.releaseDepthData(frameSet: FrameSet) {
+        val depthFrame: Frame = frameSet
                 .first(StreamType.DEPTH)
-                .releaseWith(fr)
+                .releaseWith(this)
         val d = depthFrame.`as`<DepthFrame>(Extension.DEPTH_FRAME)
-        debug(d.getDistance(COLOR_WIDTH / 2, COLOR_HEIGHT / 2))
+        debug(d.getDistance(DEPTH_WIDTH / 2, DEPTH_HEIGHT / 2))
     }
-
 
     fun hasFace() {
         mFrameCount = FRAME_MAX_COUNT

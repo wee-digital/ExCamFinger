@@ -17,7 +17,7 @@ class App : Application() {
         Library.app = this
         HeroFun.app = this
         RealSense.app = this
-        //RealSense.initOpenCV()
+        RealSense.initOpenCV()
     }
 
     /**

@@ -8,7 +8,6 @@ import wee.digital.finger.FingerData
 import wee.digital.finger.FingerListener
 import wee.digital.finger.HeroFun
 import wee.digital.library.usb.Usb
-import wee.digital.library.usb.UsbEvent
 import wee.vietinbank.kiosk.R
 import wee.vietinbank.kiosk.base.BaseFragment
 
@@ -18,8 +17,7 @@ class FingerFragment : BaseFragment(), FingerListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addClickListener(deviceViewScan, deviceViewStop, deviceViewClear, viewClose)
-        onUsbEvent(Usb.deviceStatus(HeroFun.VENDOR_ID))
+        addClickListener(deviceViewScan, deviceViewStop, deviceViewClear)
     }
 
     override fun onDestroyView() {
@@ -38,20 +36,6 @@ class FingerFragment : BaseFragment(), FingerListener {
             }
             deviceViewClear -> {
                 Usb.forceClose(HeroFun.VENDOR_ID)
-            }
-            viewClose -> {
-                popBackStack()
-            }
-        }
-    }
-
-    private fun onUsbEvent(event: UsbEvent?) {
-        when (event?.status) {
-            Usb.GRANTED -> {
-                deviceTextViewMessage.text = event.usb?.productName
-            }
-            Usb.DETACHED -> {
-                deviceTextViewMessage.text = "Device had been detached."
             }
         }
     }

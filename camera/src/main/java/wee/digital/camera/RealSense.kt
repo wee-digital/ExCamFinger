@@ -13,9 +13,6 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.intel.realsense.librealsense.RsContext
-//import org.opencv.android.BaseLoaderCallback
-//import org.opencv.android.LoaderCallbackInterface
-//import org.opencv.android.OpenCVLoader
 
 object RealSense {
 
