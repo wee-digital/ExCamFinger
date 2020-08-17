@@ -21,6 +21,7 @@ import wee.digital.camera.detector.Box
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
 import java.io.InputStreamReader
+import java.io.StringReader
 import java.util.*
 import kotlin.math.*
 
@@ -523,4 +524,26 @@ fun String?.base64ToBitmap(): Bitmap? {
     this ?: return null
     val bytes = Base64.decode(this, Base64.NO_WRAP)
     return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+}
+
+fun <T> String?.parse(cls: Class<T>): T? {
+    if (isNullOrEmpty()) {
+        return null
+    }
+    return try {
+        return convertFactory.fromJson(this, cls)
+    } catch (ignore: Exception) {
+        null
+    }
+}
+
+fun <T> String?.parse(cls: Class<Array<T>>): List<T>? {
+    if (isNullOrEmpty()) {
+        return null
+    }
+    return try {
+        return convertFactory.fromJson(StringReader(this), cls).toList()
+    } catch (ignore: Exception) {
+        null
+    }
 }

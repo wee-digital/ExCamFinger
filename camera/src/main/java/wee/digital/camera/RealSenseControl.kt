@@ -124,12 +124,16 @@ class RealSenseControl {
                 .releaseWith(this)
                 .`as`(Extension.DEPTH_FRAME)
 
+        val points = Pointcloud()
+                .process(depthFrame)
+                .`as`<Points>(Extension.POINTS)
+
         ByteArray(COLOR_SIZE).also {
             colorFrame.getData(it)
             colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
         }
 
-        RealSense.depthLiveData.postValue(Pair(colorBitmap, depthFrame))
+        RealSense.depthLiveData.postValue(Pair(colorBitmap, points))
     }
 
     private fun hardwareReset() {
@@ -161,7 +165,7 @@ class RealSenseControl {
                     val frameSet: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
                     when {
                         mFrameCount > 0 -> {
-                            fr.frameRelease(frameSet)
+                            fr.depthRelease(frameSet)
                         }
                         mFrameCount < FRAME_MAX_SLEEP -> {
                             mFrameCount = FRAME_MAX_COUNT
@@ -171,7 +175,11 @@ class RealSenseControl {
                 }
             } catch (e: Throwable) {
                 e(e.message)
-                repeat()
+                if (isStreaming) {
+                    hardwareReset()
+                    Handler().postDelayed({ onStart() }, 2000)
+                    streamHandler?.postDelayed(this, 4000)
+                }
             }
 
         }

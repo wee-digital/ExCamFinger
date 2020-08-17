@@ -315,10 +315,7 @@
     </style>
 
     <style name="Device.Page" parent="MatchParent">
-        <item name="android:paddingStart">@dimen/_6sdp</item>
-        <item name="android:paddingEnd">@dimen/_6sdp</item>
-        <item name="android:paddingBottom">@dimen/_6sdp</item>
-        <item name="android:paddingTop">@dimen/_6sdp</item>
+        <item name="android:padding">@dimen/_6sdp</item>
         <item name="android:background">@android:color/white</item>
     </style>
 

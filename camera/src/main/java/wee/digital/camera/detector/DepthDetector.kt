@@ -3,6 +3,7 @@ package wee.digital.camera.detector
 import android.graphics.Bitmap
 import android.graphics.PointF
 import com.intel.realsense.librealsense.DepthFrame
+import com.intel.realsense.librealsense.Points
 import wee.digital.camera.*
 
 class DepthDetector {
@@ -32,9 +33,9 @@ class DepthDetector {
         currentFace = null
     }
 
-    fun detectFace(colorBitmap: Bitmap?, depthFrame: DepthFrame?) {
+    fun detectFace(colorBitmap: Bitmap?, points: Points?) {
         colorBitmap ?: return
-        depthFrame ?: return
+        points ?: return
         if (isDetecting) return
         isDetecting = true
         mtcnn.detectFacesAsync(colorBitmap, MIN_SIZE)
@@ -49,7 +50,7 @@ class DepthDetector {
                         statusListener?.onFacePerformed()
                         if (!faceChangeProcess(box)) statusListener?.onFaceChanged()
                         currentFace = box
-                        onFaceDetect(box, colorBitmap, depthFrame)
+                        onFaceDetect(box, colorBitmap, points)
                     }
                 }
     }
@@ -63,7 +64,7 @@ class DepthDetector {
     /**
      * Detect method 1st: use [OptionListener] filter face properties to continue [onDepthDetect]
      */
-    private fun onFaceDetect(box: Box, colorBitmap: Bitmap, depthFrame: DepthFrame) {
+    private fun onFaceDetect(box: Box, colorBitmap: Bitmap, points: Points) {
 
         if (!optionListener.onFaceScore(box.score)) return
 
@@ -80,55 +81,55 @@ class DepthDetector {
         val faceBitmap = boxRect.cropColorFace(colorBitmap) ?: return
         dataListener?.onFaceColorImage(faceBitmap)
 
-        onDepthDetect(box, faceBitmap, depthFrame)
+        if (!isDepthDetecting) {
+            onDepthDetect(box, faceBitmap, points)
+        }
+    }
+
+    private fun onDepthDetect(box: Box, colorBitmap: Bitmap, points: Points) {
+        isDepthDetecting = true
+        val vertices = points.vertices
+        val textureCoordinates = points.textureCoordinates
+        val sV = vertices.toList().toJsonArray()
+        val sTC = textureCoordinates.toList().toJsonArray()
+        isDepthDetecting = false
     }
 
     private var isDepthDetecting: Boolean = false
 
-    private fun onDepthDetect(box: Box, colorBitmap: Bitmap, depthFrame: DepthFrame) {
+    private fun cropFaceDis(box: Box, depthFrame: DepthFrame) {
+        if (
+                depthFrame.width == 0 ||
+                depthFrame.height == 0 ||
+                box.left() < 0 ||
+                box.right() > depthFrame.width ||
+                box.top() < 0 ||
+                box.bottom() > depthFrame.height
+        ) {
+            return
+        }
 
-        if (isDepthDetecting) return
         isDepthDetecting = true
-
-        if (depthFrame.width != 0 && depthFrame.height != 0) {
-            val unit = depthFrame.units
-            val list = mutableListOf<Float>()
-            for (x in box.left() until box.right()) {
-                for (y in box.top() until box.bottom() step 10) {
-                    try {
-                        val z = (depthFrame.getDistance(x, y) * unit).trim()
-                        list.add(x.toFloat())
-                        list.add(y.toFloat())
-                        list.add(z)
-                    } catch (e: Exception) {
-                        list.clear()
-                    }
+        val unit = depthFrame.units
+        try {
+            val center = depthFrame.getDistance((box.left() + box.right()) / 2, (box.top() + box.bottom()) / 2)
+            d("Face: ${center.trim() * unit}")
+        } catch (e: Exception) {
+        }
+        val list = mutableListOf<Float>()
+        for (x in box.left() until box.right()) {
+            for (y in box.top() until box.bottom() step 10) {
+                try {
+                    val z = (depthFrame.getDistance(x, y) * unit).trim()
+                    list.add(x.toFloat())
+                    list.add(y.toFloat())
+                    list.add(z)
+                } catch (e: Exception) {
+                    list.clear()
                 }
-            }
-
-            if (list.isNotEmpty()) {
-                RealSense.coordLiveData.postValue(list)
             }
         }
         isDepthDetecting = false
-    }
-
-    private fun getRootCoord(depthFrame: DepthFrame) {
-        val unit = depthFrame.units
-        val list = mutableListOf<Float>()
-        try {
-            list.add((depthFrame.getDistance(160, 120) * unit).trim())
-            list.add((depthFrame.getDistance(320, 120) * unit).trim())
-            list.add((depthFrame.getDistance(480, 120) * unit).trim())
-            list.add((depthFrame.getDistance(160, 240) * unit).trim())
-            list.add((depthFrame.getDistance(320, 240) * unit).trim())
-            list.add((depthFrame.getDistance(480, 240) * unit).trim())
-            list.add((depthFrame.getDistance(160, 360) * unit).trim())
-            list.add((depthFrame.getDistance(320, 360) * unit).trim())
-            list.add((depthFrame.getDistance(480, 360) * unit).trim())
-            RealSense.coordLiveData.postValue(list)
-        } catch (e: Exception) {
-        }
     }
 
     private fun faceChangeProcess(face: Box): Boolean {

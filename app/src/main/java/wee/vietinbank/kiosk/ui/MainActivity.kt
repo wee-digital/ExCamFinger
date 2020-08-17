@@ -11,6 +11,7 @@ import wee.digital.library.usb.UsbEvent
 import wee.digital.library.usb.UsbLiveData
 import wee.vietinbank.kiosk.R
 import wee.vietinbank.kiosk.base.BaseActivity
+import wee.vietinbank.kiosk.gl3.pixelArr
 import wee.vietinbank.kiosk.io.Cashino
 import wee.vietinbank.kiosk.ui.camera.CameraFragment
 import wee.vietinbank.kiosk.ui.camera.DepthDetectFragment
@@ -27,7 +28,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val i= pixelArr[0]
         addClickListener(viewCamera, viewDepthDetect, viewFaceDetect,
                 viewPrinter, viewFingerprint, viewDevices, viewOpenGL)
 

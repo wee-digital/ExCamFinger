@@ -2,14 +2,17 @@ package wee.vietinbank.kiosk.ui.camera
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.camera_depth_detect.*
 import wee.digital.camera.RealSense
-import wee.digital.camera.d
-import wee.digital.camera.fixToRsColorSize
 import wee.digital.camera.job.DepthDetectJob
+import wee.digital.camera.parse
+import wee.digital.camera.readAsset
 import wee.vietinbank.kiosk.R
 import wee.vietinbank.kiosk.base.BaseFragment
+import wee.vietinbank.kiosk.gl3.OverlaySurfaceView
+import wee.vietinbank.kiosk.gl3.hasOpenGLES30
 
 class DepthDetectFragment : BaseFragment(), DepthDetectJob.Listener {
 
@@ -18,31 +21,27 @@ class DepthDetectFragment : BaseFragment(), DepthDetectJob.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addClickListener(deviceViewStart, deviceViewStop)
-        imageViewColor.fixToRsColorSize()
+        if (hasOpenGLES30) {
+            (view as ViewGroup).addView(OverlaySurfaceView(context!!), 0)
+        }
 
-        RealSense.depthLiveData.observe(viewLifecycleOwner, Observer {
+        /*RealSense.depthLiveData.observe(viewLifecycleOwner, Observer {
             imageViewColor.setImageBitmap(it?.first)
         })
-
-        RealSense.coordLiveData.observe(viewLifecycleOwner, Observer {
-            d("Coords: ${it.size}")
-            /*if (it.size == 9) {
-                textView1.text = String.format("%2f", it[0])
-                textView2.text = String.format("%2f", it[1])
-                textView3.text = String.format("%2f", it[2])
-                textView4.text = String.format("%2f", it[3])
-                textView5.text = String.format("%2f", it[4])
-                textView6.text = String.format("%2f", it[5])
-                textView7.text = String.format("%2f", it[6])
-                textView8.text = String.format("%2f", it[7])
-                textView9.text = String.format("%2f", it[8])
-            }*/
-        })
-
         DepthDetectJob(this).observe(viewLifecycleOwner)
 
-        /* val s = readAsset("face.txt")
-         val bmp = s.base64ToBitmap()*/
+        val sV = readAsset("vertices.json")
+                ?.parse(Array<Float>::class.java)
+                ?.toFloatArray() ?: return
+
+
+        val sTC = readAsset("texture_coord.json")
+                ?.parse(Array<Float>::class.java)
+                ?.toFloatArray() ?: return
+
+
+        println("")*/
+
     }
 
     override fun onViewClick(view: View) {

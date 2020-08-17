@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.*
 import com.intel.realsense.librealsense.DepthFrame
+import com.intel.realsense.librealsense.Points
 import wee.digital.camera.RealSense
 import wee.digital.camera.detector.DepthDetector
 
@@ -16,7 +17,7 @@ class DepthDetectJob(private var uiListener: Listener) :
         DepthDetector.DataListener,
         DepthDetector.StatusListener {
 
-    private val imagesObserver = Observer<Pair<Bitmap?, DepthFrame?>?> {
+    private val imagesObserver = Observer<Pair<Bitmap?, Points?>?> {
         it?.apply {
             detector.detectFace(it.first, it.second)
         }
