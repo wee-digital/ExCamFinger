@@ -36,6 +36,7 @@ dependencies {
     implementation "com.google.firebase:firebase-ml-vision-face-model:19.0.0"
     implementation "com.google.firebase:firebase-ml-vision-automl:18.0.3"
     implementation "com.google.firebase:firebase-ml-vision:24.0.1"
+    implementation "com.google.code.gson:gson:2.8.6"
 
     // INTER REAL SENCE LIB
     implementation "com.intel.realsense:librealsense:2.34.0@aar"

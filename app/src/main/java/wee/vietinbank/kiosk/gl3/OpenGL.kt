@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.opengl.GLES31
 import android.util.Log
+import wee.digital.library.extension.parse
+import wee.digital.library.extension.readAsset
 import wee.vietinbank.kiosk.App
 import java.nio.*
 
@@ -251,6 +253,15 @@ val pyramidPoints: FloatArray
         return arr.toFloatArray()
     }
 
+val facePoint: FloatArray
+    get() {
+        val s = readAsset("face.txt")
+        val arr = mutableListOf<Float>()
+        s.parse(Array<Float>::class.java)?.forEach {
+            arr.add(it/1280)
+        }
+        return arr.toFloatArray()
+    }
 const val Z_NEAR = 1f
 
 const val Z_FAR = 40f

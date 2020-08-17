@@ -12,6 +12,8 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.intel.realsense.librealsense.DepthFrame
+import com.intel.realsense.librealsense.Frame
 import com.intel.realsense.librealsense.RsContext
 
 object RealSense {
@@ -91,7 +93,7 @@ object RealSense {
                     }
                 }
                 if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                    //permissionGranted()
+                    permissionGranted()
                 }
             }
         }
@@ -136,9 +138,18 @@ object RealSense {
      */
     private var realSenseControl: RealSenseControl? = null
 
-    val imagesLiveData: MutableLiveData<Pair<Bitmap, Bitmap>?> by lazy {
-        MutableLiveData<Pair<Bitmap, Bitmap>?>()
+    val imagesLiveData: MutableLiveData<Pair<Bitmap?, Bitmap?>?> by lazy {
+        MutableLiveData<Pair<Bitmap?, Bitmap?>?>()
     }
+
+    val depthLiveData: MutableLiveData<Pair<Bitmap?, DepthFrame?>?> by lazy {
+        MutableLiveData<Pair<Bitmap?, DepthFrame?>?>()
+    }
+
+    val coordLiveData: MutableLiveData<List<Float>> by lazy {
+        MutableLiveData<List<Float>>()
+    }
+
 
     fun start() {
         Thread {

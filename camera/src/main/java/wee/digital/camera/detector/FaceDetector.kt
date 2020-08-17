@@ -9,7 +9,7 @@ class FaceDetector {
 
     companion object {
         const val MIN_DISTANCE = 120
-        const val MIN_SIZE = 300
+        const val MIN_SIZE = RealSenseControl.COLOR_WIDTH / 5
     }
 
     private val maskFilter = ModelFilter("face/mask/manifest.json")
@@ -32,7 +32,9 @@ class FaceDetector {
         currentFace = null
     }
 
-    fun detectFace(colorBitmap: Bitmap, depthBitmap: Bitmap) {
+    fun detectFace(colorBitmap: Bitmap?, depthBitmap: Bitmap?) {
+        colorBitmap ?: return
+        depthBitmap ?: return
         if (isDetecting) return
         isDetecting = true
         mtcnn.detectFacesAsync(colorBitmap, MIN_SIZE)

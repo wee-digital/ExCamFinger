@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:id="@+id/viewPreview"
+    android:scaleX="-1"
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.Guideline
@@ -10,12 +11,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.75" />
+        app:layout_constraintGuide_percent="0.3" />
 
-    <wee.digital.camera.RealSenseView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewColor"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@android:color/black"
         app:layout_constraintDimensionRatio="H,1920:1080"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -26,13 +28,12 @@
         android:id="@+id/imageViewDepth"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="4dp"
         android:layout_margin="5dp"
-        android:background="@android:color/holo_green_light"
+        android:background="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="@id/imageViewColor"
-        app:layout_constraintDimensionRatio="H,640:480"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline" />
+        app:layout_constraintDimensionRatio="H,1920:1080"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/imageViewColor" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewCensored"

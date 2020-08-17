@@ -16,13 +16,13 @@ class RealSenseControl {
 
     companion object {
 
-        const val VIDEO_WIDTH = 1280
-        const val VIDEO_HEIGHT = 720
-        const val VIDEO_SIZE = VIDEO_WIDTH * VIDEO_HEIGHT * 3
-
         const val COLOR_WIDTH = 640
         const val COLOR_HEIGHT = 480
         const val COLOR_SIZE = COLOR_WIDTH * COLOR_HEIGHT * 3
+
+        const val DEPTH_WIDTH = 640
+        const val DEPTH_HEIGHT = 480
+        const val DEPTH_SIZE = DEPTH_WIDTH * DEPTH_HEIGHT * 3
 
         const val TIME_WAIT = 2000
         const val FRAME_RATE = 10
@@ -38,8 +38,8 @@ class RealSenseControl {
     private var pipeline: Pipeline? = null
     private var pipelineProfile: PipelineProfile? = null
 
-    private var videoBitmap: Bitmap? = null
     private var colorBitmap: Bitmap? = null
+    private var depthBitmap: Bitmap? = null
 
     private var isDestroy = false
     private var isFrameOK = false
@@ -55,6 +55,7 @@ class RealSenseControl {
     private val streamRunnable: Runnable = object : Runnable {
         override fun run() {
             var isNext = false
+
             try {
                 FrameReleaser().use { fr ->
                     if (!RealSense.imagesLiveData.hasObservers()) {
@@ -78,7 +79,7 @@ class RealSenseControl {
                     when {
                         mFrameCount > 0 -> {
                             fr.frameRelease(frameSet)
-                            fr.releaseDepthData(frameSet)
+                            //fr.depthRelease(frameSet)
                         }
                         mFrameCount < FRAME_MAX_SLEEP -> {
                             mFrameCount = FRAME_MAX_COUNT
@@ -93,7 +94,7 @@ class RealSenseControl {
                     isNext = true
                 }
             } catch (e: Throwable) {
-                debug("streaming, error: " + e.message)
+                e(e.message)
                 isProcessingFrame = false
             }
 
@@ -120,12 +121,13 @@ class RealSenseControl {
     }
 
     fun onCreate() {
-
         if (isStreaming) return
         try {
             val config = Config().apply {
-                enableStream(StreamType.COLOR, 0, VIDEO_WIDTH, VIDEO_HEIGHT, StreamFormat.RGB8, FRAME_RATE)
-                enableStream(StreamType.DEPTH, 0, COLOR_WIDTH, COLOR_HEIGHT, StreamFormat.Z16, FRAME_RATE)
+                enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT,
+                        StreamFormat.RGB8, FRAME_RATE)
+                enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT,
+                        StreamFormat.Z16, FRAME_RATE)
             }
             pipeline = Pipeline()
             pipelineProfile = pipeline?.start(config)?.apply {
@@ -140,62 +142,59 @@ class RealSenseControl {
     fun onPause() {
         isStreaming = false
         isDestroy = true
-        mHandlerThread?.quitSafely()
-        pipelineProfile?.close()
-        pipeline?.stop()
+        try {
+            mHandlerThread?.quitSafely()
+            pipelineProfile?.close()
+            pipeline?.stop()
+        } catch (t: Throwable) {
+            e(t.localizedMessage)
+        }
     }
 
     private fun FrameReleaser.frameRelease(frameSet: FrameSet) {
 
-        val videoFrame: Frame = frameSet.first(StreamType.COLOR).releaseWith(this)
+        val colorFrame: Frame = frameSet
+                .first(StreamType.COLOR)
+                .releaseWith(this)
 
-        val colorFrame: Frame = align.process(frameSet)
+        val depthFrame: Frame = align.process(frameSet)
                 .releaseWith(this)
                 .applyFilter(colorizer)
                 .releaseWith(this)
                 .first(StreamType.DEPTH)
                 .releaseWith(this)
 
-        imageRelease(videoFrame, colorFrame)
-    }
-
-    private fun imageRelease(videoFrame: Frame, colorFrame: Frame) {
-        ByteArray(VIDEO_SIZE).also {
-            videoFrame.getData(it)
-            videoBitmap = it.rgbToBitmap(VIDEO_WIDTH, VIDEO_HEIGHT)
-        }
-        ByteArray(VIDEO_SIZE).also {
+        ByteArray(COLOR_SIZE).also {
             colorFrame.getData(it)
-            colorBitmap = it.rgbToBitmap(VIDEO_WIDTH, VIDEO_HEIGHT)
+            colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
         }
-        if (videoBitmap != null && colorBitmap != null) {
-            RealSense.imagesLiveData.postValue(Pair(videoBitmap!!, colorBitmap!!))
+        ByteArray(COLOR_SIZE).also {
+            depthFrame.getData(it)
+            depthBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
         }
+
+        RealSense.imagesLiveData.postValue(Pair(colorBitmap, depthBitmap))
     }
 
-    private fun FrameReleaser.releaseDepthData(frameSet: FrameSet) {
-        val videoFrame: Frame = frameSet.first(StreamType.COLOR).releaseWith(this)
+    private fun FrameReleaser.depthRelease(frameSet: FrameSet) {
 
-        val alignFrame: FrameSet = align.process(frameSet)
+        val colorFrame: Frame = frameSet
+                .first(StreamType.COLOR)
                 .releaseWith(this)
 
-        val colorFrame: Frame = alignFrame
-                .applyFilter(colorizer)
+        val depthFrame: DepthFrame = align.process(frameSet)
                 .releaseWith(this)
-                .first(StreamType.DEPTH)
-                .releaseWith(this)
-
-        val depthFrame: DepthFrame = alignFrame
                 .first(StreamType.DEPTH)
                 .releaseWith(this)
                 .`as`(Extension.DEPTH_FRAME)
 
-        val w = depthFrame.width
-        val h = depthFrame.height
-        val dis = depthFrame.getDistance(w / 2, h / 2)
-        debug("w:$w, h:$h, dis:$dis")
+        ByteArray(COLOR_SIZE).also {
+            colorFrame.getData(it)
+            colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
+        }
 
-        imageRelease(videoFrame, colorFrame)
+
+        RealSense.depthLiveData.postValue(Pair(colorBitmap, depthFrame))
     }
 
     fun hasFace() {

@@ -198,6 +198,11 @@
         <item name="android:includeFontPadding">true</item>
     </style>
 
+    <style name="TextView.Coord">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+    </style>
+
     <!-- Layout. -->
     <style name="ParentLayout" parent="MatchParent">
         <item name="android:focusable">true</item>

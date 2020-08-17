@@ -3,12 +3,20 @@ package wee.digital.camera
 import android.graphics.*
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 import android.util.Log
+import android.view.View
 import androidx.annotation.IdRes
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import wee.digital.camera.detector.Box
 import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
@@ -17,8 +25,12 @@ import java.util.*
 import kotlin.math.*
 
 
-fun debug(s: Any?) {
+fun d(s: Any?) {
     if (BuildConfig.DEBUG) Log.d("RealSense", s.toString())
+}
+
+fun e(s: Any?) {
+    if (BuildConfig.DEBUG) Log.e("RealSense", s.toString())
 }
 
 val uiHandler: Handler get() = Handler(Looper.getMainLooper())
@@ -209,7 +221,7 @@ fun Rect.cropColorFace(bitmap: Bitmap): Bitmap? {
  * @this: box.transformToRect
  */
 fun Rect.cropDepthFace(bitmap: Bitmap): Bitmap? {
-    val rect = when (RealSenseControl.VIDEO_WIDTH) {
+    val rect = when (RealSenseControl.COLOR_WIDTH) {
         1920 -> this.getFace1920x1080()
         1280 -> this.getFace1280x720()
         else -> this.getFace640x480()
@@ -386,7 +398,8 @@ fun IntArray?.argbToBitmap(width: Int, height: Int): Bitmap? {
     this ?: return null
     return try {
         val bmp = Bitmap.createBitmap(this, width, height, Bitmap.Config.RGB_565)
-        return bmp.flipHorizontal()
+        //return bmp.flipHorizontal()
+        return bmp
     } catch (e: Throwable) {
         null
     }
@@ -434,4 +447,80 @@ fun readAsset(filename: String): String {
         }
     }
     return sb.toString()
+}
+
+private val convertFactory: Gson = Gson()
+
+fun <T> T.toJsonObject(): JsonObject? {
+    return try {
+        val element = convertFactory.toJsonTree(this, object : TypeToken<T>() {}.type)
+        return element.asJsonObject
+    } catch (ignore: Exception) {
+        null
+    }
+}
+
+fun <T> Collection<T?>?.toJsonArray(): JsonArray? {
+    if (this.isNullOrEmpty()) return null
+    val jsonArray = JsonArray()
+    this.forEach {
+        when (it) {
+            is JsonObject -> {
+                jsonArray.add(it)
+            }
+            is String -> {
+                jsonArray.add(it as String)
+            }
+            is Number -> {
+                jsonArray.add(it as Number)
+            }
+            else -> it.toJsonObject()?.also { obj ->
+                jsonArray.add(obj)
+            }
+        }
+    }
+    if (jsonArray.size() < 1) return null
+    return jsonArray
+}
+
+fun Bitmap.getRGB(x: Int, y: Int, block: (Int, Int, Int) -> Unit) {
+    getPixel(0, 0).also {
+        block(Color.red(it), Color.green(it), Color.blue(it))
+    }
+}
+
+fun Float.trim(): Float {
+    val s = this.toString()
+    return if (s.indexOf("E") != -1) {
+        s.substringBefore("E").toFloat()
+    } else {
+        this
+    }
+}
+
+fun View.fixToRsColorSize() {
+    ConstraintSet().apply {
+        clone(parent as ConstraintLayout)
+        setDimensionRatio(this@fixToRsColorSize.id, "H,${RealSenseControl.COLOR_WIDTH}:${RealSenseControl.COLOR_HEIGHT}")
+        applyTo(parent as ConstraintLayout)
+    }
+}
+
+fun View.fixToRsDepthSize() {
+    ConstraintSet().apply {
+        clone(parent as ConstraintLayout)
+        setDimensionRatio(this@fixToRsDepthSize.id, "H,${RealSenseControl.DEPTH_WIDTH}:${RealSenseControl.DEPTH_HEIGHT}")
+        applyTo(parent as ConstraintLayout)
+    }
+}
+
+fun Bitmap?.bitmapToBase64(): String? {
+    val bytes = this?.toBytes() ?: return null
+    return Base64.encodeToString(bytes, Base64.NO_WRAP)
+}
+
+fun String?.base64ToBitmap(): Bitmap? {
+    this ?: return null
+    val bytes = Base64.decode(this, Base64.NO_WRAP)
+    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }

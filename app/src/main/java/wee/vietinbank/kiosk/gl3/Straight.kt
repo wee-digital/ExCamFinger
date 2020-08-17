@@ -32,7 +32,7 @@ class Straight {
     // this is the initial data, which will need to translated into the mVertices variable in the consturctor.
     private val verticesBuffer: FloatBuffer
 
-    private var verticesData = pyramidPoints
+    private var verticesData = facePoint
 
     private var programHandle: Int = 0
 

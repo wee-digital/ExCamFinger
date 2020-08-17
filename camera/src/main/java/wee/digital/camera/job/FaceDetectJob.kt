@@ -28,7 +28,7 @@ class FaceDetectJob(private var uiListener: Listener) :
         it.statusListener = this
     }
 
-    private val imagesObserver = Observer<Pair<Bitmap, Bitmap>?> {
+    private val imagesObserver = Observer<Pair<Bitmap?, Bitmap?>?> {
         it?.apply {
             if (hasDetect) detector.detectFace(first, second)
         }

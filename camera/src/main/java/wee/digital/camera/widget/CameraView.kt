@@ -1,7 +1,6 @@
 package wee.digital.camera.widget
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -32,23 +31,19 @@ class CameraView : ConstraintLayout {
         LayoutInflater.from(context).inflate(R.layout.widget_camera_view, this)
         ConstraintSet().apply {
             clone(viewPreview)
-            setDimensionRatio(imageViewColor.id, "H,${RealSenseControl.VIDEO_WIDTH}:${RealSenseControl.VIDEO_HEIGHT}")
+            setDimensionRatio(imageViewColor.id, "H,${RealSenseControl.COLOR_WIDTH}:${RealSenseControl.COLOR_HEIGHT}")
             setDimensionRatio(imageViewDepth.id, "H,${RealSenseControl.COLOR_WIDTH}:${RealSenseControl.COLOR_HEIGHT}")
             applyTo(viewPreview)
         }
     }
 
     fun observe(lifecycleOwner: LifecycleOwner) {
-        RealSense.imagesLiveData.observe(lifecycleOwner, Observer<Pair<Bitmap, Bitmap>?> {
+        RealSense.imagesLiveData.observe(lifecycleOwner, Observer {
             it?.apply {
-                imageViewColor.setBitmap(first)
-                imageViewDepth.setImageBitmap(second)
+                imageViewColor.setImageBitmap(it.first)
+                imageViewDepth.setImageBitmap(it.second)
             }
         })
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
     }
 
     fun targetFace(left: Int, top: Int = 0, width: Int = 0, height: Int = 0) {
@@ -64,14 +59,14 @@ class CameraView : ConstraintLayout {
                     ConstraintSet.START,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.START,
-                    viewPreview.width * left / RealSenseControl.VIDEO_WIDTH
+                    viewPreview.width * left / RealSenseControl.COLOR_WIDTH
             )
             connect(
                     imageViewCensored.id,
                     ConstraintSet.END,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.END,
-                    viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.VIDEO_WIDTH)
+                    viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
             )
 
             connect(
@@ -79,14 +74,14 @@ class CameraView : ConstraintLayout {
                     ConstraintSet.TOP,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.TOP,
-                    viewPreview.height * top / RealSenseControl.VIDEO_HEIGHT
+                    viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
             )
             connect(
                     imageViewCensored.id,
                     ConstraintSet.BOTTOM,
                     ConstraintSet.PARENT_ID,
                     ConstraintSet.BOTTOM,
-                    viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.VIDEO_HEIGHT)
+                    viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
             )
             applyTo(viewPreview)
         }

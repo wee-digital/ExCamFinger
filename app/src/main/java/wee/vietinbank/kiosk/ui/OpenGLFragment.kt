@@ -12,11 +12,10 @@ class OpenGLFragment : BaseFragment() {
 
     override val layoutResourceId: Int = R.layout.opengl
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (hasOpenGLES30) {
-            (view as ViewGroup).addView(OverlaySurfaceView(context))
+            (view as ViewGroup).addView(OverlaySurfaceView(context!!))
         }
     }
 

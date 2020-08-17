@@ -27,12 +27,6 @@
                 tools:text="Devices" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/viewFingerprint"
-                style="@style/Settings.Item"
-                android:layout_marginTop="@dimen/_20sdp"
-                tools:text="Fingerprint" />
-
-            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewPrinter"
                 style="@style/Settings.Item"
                 android:layout_marginTop="@dimen/_20sdp"
@@ -46,14 +40,20 @@
                 tools:text="Camera" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/viewDepthDetect"
+                style="@style/Settings.Item"
+                android:text="Depth detect" />
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewFaceDetect"
                 style="@style/Settings.Item"
                 android:text="Face detect" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/viewCameraFaceDetect"
+                android:id="@+id/viewFingerprint"
                 style="@style/Settings.Item"
-                android:text="Camera + face detect" />
+                android:layout_marginTop="@dimen/_20sdp"
+                tools:text="Fingerprint" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/viewOpenGL"

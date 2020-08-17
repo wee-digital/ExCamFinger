@@ -12,9 +12,9 @@ import wee.digital.library.usb.UsbLiveData
 import wee.vietinbank.kiosk.R
 import wee.vietinbank.kiosk.base.BaseActivity
 import wee.vietinbank.kiosk.io.Cashino
-import wee.vietinbank.kiosk.ui.camera.CamFaceFragment
 import wee.vietinbank.kiosk.ui.camera.CameraFragment
-import wee.vietinbank.kiosk.ui.camera.FaceFragment
+import wee.vietinbank.kiosk.ui.camera.DepthDetectFragment
+import wee.vietinbank.kiosk.ui.camera.FaceDetectFragment
 import wee.vietinbank.kiosk.ui.finger.FingerFragment
 import wee.vietinbank.kiosk.ui.printer.PrinterFragment
 
@@ -28,7 +28,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addClickListener(viewCamera, viewFaceDetect, viewCameraFaceDetect,
+        addClickListener(viewCamera, viewDepthDetect, viewFaceDetect,
                 viewPrinter, viewFingerprint, viewDevices, viewOpenGL)
 
         UsbLiveData.builder(this)
@@ -41,11 +41,11 @@ class MainActivity : BaseActivity() {
     override fun onViewClick(view: View) {
         when (view) {
             viewCamera -> add(CameraFragment(), true)
-            viewOpenGL -> add(OpenGLFragment(), true)
-            viewFaceDetect -> add(FaceFragment(), true)
-            viewCameraFaceDetect -> add(CamFaceFragment(), true)
+            viewDepthDetect -> add(DepthDetectFragment(), true)
+            viewFaceDetect -> add(FaceDetectFragment(), true)
             viewPrinter -> add(PrinterFragment(), true)
             viewFingerprint -> add(FingerFragment(), true)
+            viewOpenGL -> add(OpenGLFragment(), true)
         }
     }
 

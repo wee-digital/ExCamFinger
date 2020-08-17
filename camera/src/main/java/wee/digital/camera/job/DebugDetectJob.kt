@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.*
 import wee.digital.camera.RealSense
+import wee.digital.camera.base64ToBitmap
+import wee.digital.camera.bitmapToBase64
 import wee.digital.camera.detector.FaceDetector
 
 /**
@@ -18,7 +20,7 @@ class DebugDetectJob(private var uiListener: Listener) :
     interface Listener : FaceDetector.OptionListener, FaceDetector.DataListener,
             FaceDetector.StatusListener
 
-    private val imagesObserver = Observer<Pair<Bitmap, Bitmap>?> {
+    private val imagesObserver = Observer<Pair<Bitmap?, Bitmap?>?> {
         it?.apply {
             detector.detectFace(first, second)
         }
@@ -106,6 +108,7 @@ class DebugDetectJob(private var uiListener: Listener) :
     }
 
     override fun onFacePerformed() {
+        RealSense.hasFace()
         uiCallback { onFacePerformed() }
     }
 
