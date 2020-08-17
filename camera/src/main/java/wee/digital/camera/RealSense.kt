@@ -13,7 +13,6 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.intel.realsense.librealsense.DepthFrame
-import com.intel.realsense.librealsense.Frame
 import com.intel.realsense.librealsense.RsContext
 
 object RealSense {
@@ -136,7 +135,7 @@ object RealSense {
     /**
      * [RealSenseControl]
      */
-    private var realSenseControl: RealSenseControl? = null
+    var realSenseControl: RealSenseControl? = null
 
     val imagesLiveData: MutableLiveData<Pair<Bitmap?, Bitmap?>?> by lazy {
         MutableLiveData<Pair<Bitmap?, Bitmap?>?>()
@@ -155,18 +154,18 @@ object RealSense {
         Thread {
             realSenseControl = RealSenseControl().also {
                 Thread.sleep(2400)
-                it.onCreate()
+                it.onStart()
             }
         }.start()
     }
 
     fun stop() {
-        realSenseControl?.onPause()
+        realSenseControl?.onStop()
         realSenseControl = null
     }
 
     fun hasFace() {
-        realSenseControl?.hasFace()
+        realSenseControl?.streamProcessor?.aware()
     }
 
     /**

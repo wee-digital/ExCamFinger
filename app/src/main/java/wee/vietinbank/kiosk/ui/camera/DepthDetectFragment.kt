@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.camera_depth_detect.*
 import wee.digital.camera.RealSense
+import wee.digital.camera.d
 import wee.digital.camera.fixToRsColorSize
 import wee.digital.camera.job.DepthDetectJob
 import wee.vietinbank.kiosk.R
@@ -19,12 +20,13 @@ class DepthDetectFragment : BaseFragment(), DepthDetectJob.Listener {
         addClickListener(deviceViewStart, deviceViewStop)
         imageViewColor.fixToRsColorSize()
 
-        RealSense.imagesLiveData.observe(viewLifecycleOwner, Observer {
+        RealSense.depthLiveData.observe(viewLifecycleOwner, Observer {
             imageViewColor.setImageBitmap(it?.first)
         })
 
         RealSense.coordLiveData.observe(viewLifecycleOwner, Observer {
-            if (it.size == 9) {
+            d("Coords: ${it.size}")
+            /*if (it.size == 9) {
                 textView1.text = String.format("%2f", it[0])
                 textView2.text = String.format("%2f", it[1])
                 textView3.text = String.format("%2f", it[2])
@@ -34,13 +36,10 @@ class DepthDetectFragment : BaseFragment(), DepthDetectJob.Listener {
                 textView7.text = String.format("%2f", it[6])
                 textView8.text = String.format("%2f", it[7])
                 textView9.text = String.format("%2f", it[8])
-            }
+            }*/
         })
 
-
-        /*
         DepthDetectJob(this).observe(viewLifecycleOwner)
-        */
 
         /* val s = readAsset("face.txt")
          val bmp = s.base64ToBitmap()*/

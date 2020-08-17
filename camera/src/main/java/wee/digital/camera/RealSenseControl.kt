@@ -31,119 +31,55 @@ class RealSenseControl {
 
     }
 
-    private val colorizer = Colorizer().apply {
+    private val colorizer: Colorizer = Colorizer().apply {
         setValue(Option.COLOR_SCHEME, 0f)
     }
-    private var align: Align = Align(StreamType.COLOR)
+    private val align: Align = Align(StreamType.COLOR)
+
     private var pipeline: Pipeline? = null
     private var pipelineProfile: PipelineProfile? = null
 
     private var colorBitmap: Bitmap? = null
     private var depthBitmap: Bitmap? = null
 
-    private var isDestroy = false
-    private var isFrameOK = false
-    var isPauseCamera = false
-    private var isSleep = false
-    private var isProcessingFrame = false
     private var isStreaming = false
 
-    private var mFrameCount = FRAME_MAX_COUNT
-
-    private var mHandlerThread: HandlerThread? = null
-    private var mHandler: Handler? = null
-    private val streamRunnable: Runnable = object : Runnable {
-        override fun run() {
-            var isNext = false
-
-            try {
-                FrameReleaser().use { fr ->
-                    if (!RealSense.imagesLiveData.hasObservers()) {
-                        RealSense.imagesLiveData.postValue(null)
-                        isSleep = true
-                        true
-                    }
-                    if (isPauseCamera || isProcessingFrame) {
-                        isSleep = true
-                        true
-                    }
-                    isProcessingFrame = true
-                    if (!isFrameOK) {
-                        isFrameOK = true
-                        isProcessingFrame = false
-                        isSleep = false
-                        true
-                    }
-                    mFrameCount--
-                    val frameSet: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
-                    when {
-                        mFrameCount > 0 -> {
-                            fr.frameRelease(frameSet)
-                            //fr.depthRelease(frameSet)
-                        }
-                        mFrameCount < FRAME_MAX_SLEEP -> {
-                            mFrameCount = FRAME_MAX_COUNT
-                            isProcessingFrame = false
-                        }
-                        else -> {
-                            isProcessingFrame = false
-                        }
-                    }
-                    isSleep = false
-                    isProcessingFrame = false
-                    isNext = true
-                }
-            } catch (e: Throwable) {
-                e(e.message)
-                isProcessingFrame = false
-            }
-
-            if (!isNext) {
-                isFrameOK = false
-                hardwareReset()
-                Handler().postDelayed({ onCreate() }, 3000)
-                return
-            }
-
-            if (!isSleep) {
-                mHandler?.post(this)
-            } else {
-                mHandler?.postDelayed(this, 80)
-            }
-        }
-    }
+    private var streamHandler: Handler? = null
+    private var streamThread: HandlerThread? = null
+    val streamProcessor = StreamProcessor()
 
     init {
-        mHandlerThread = HandlerThread("streaming").also {
+        streamThread = HandlerThread("streaming").also {
             it.start()
-            mHandler = Handler(it.looper)
+            streamHandler = Handler(it.looper)
         }
     }
 
-    fun onCreate() {
+    fun onStart() {
         if (isStreaming) return
         try {
-            val config = Config().apply {
-                enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT,
-                        StreamFormat.RGB8, FRAME_RATE)
-                enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT,
-                        StreamFormat.Z16, FRAME_RATE)
-            }
-            pipeline = Pipeline()
-            pipelineProfile = pipeline?.start(config)?.apply {
-                isStreaming = true
-                mHandler?.post(streamRunnable)
+            pipeline = Pipeline().also {
+                val config = Config().apply {
+                    enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT,
+                            StreamFormat.RGB8, FRAME_RATE)
+                    enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT,
+                            StreamFormat.Z16, FRAME_RATE)
+                }
+                pipelineProfile = it.start(config)?.apply {
+                    isStreaming = true
+                    streamHandler?.post(streamProcessor)
+                }
             }
         } catch (t: Throwable) {
             isStreaming = false
         }
     }
 
-    fun onPause() {
+    fun onStop() {
         isStreaming = false
-        isDestroy = true
         try {
-            mHandlerThread?.quitSafely()
+            streamThread?.quitSafely()
+            streamProcessor.isWaitForFrame = false
             pipelineProfile?.close()
             pipeline?.stop()
         } catch (t: Throwable) {
@@ -193,12 +129,7 @@ class RealSenseControl {
             colorBitmap = it.rgbToBitmap(COLOR_WIDTH, COLOR_HEIGHT)
         }
 
-
         RealSense.depthLiveData.postValue(Pair(colorBitmap, depthFrame))
-    }
-
-    fun hasFace() {
-        mFrameCount = FRAME_MAX_COUNT
     }
 
     private fun hardwareReset() {
@@ -208,5 +139,53 @@ class RealSenseControl {
         }
     }
 
+    inner class StreamProcessor : Runnable {
+
+        private var mFrameCount = FRAME_MAX_COUNT
+
+        var isWaitForFrame: Boolean = false
+
+        override fun run() {
+            if (isWaitForFrame) {
+                repeat()
+                return
+            }
+            if (!RealSense.imagesLiveData.hasObservers() && !RealSense.depthLiveData.hasObservers()) {
+                repeat()
+                return
+            }
+            isWaitForFrame = true
+            try {
+                FrameReleaser().use { fr ->
+                    mFrameCount--
+                    val frameSet: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
+                    when {
+                        mFrameCount > 0 -> {
+                            fr.frameRelease(frameSet)
+                        }
+                        mFrameCount < FRAME_MAX_SLEEP -> {
+                            mFrameCount = FRAME_MAX_COUNT
+                        }
+                    }
+                    repeat()
+                }
+            } catch (e: Throwable) {
+                e(e.message)
+                repeat()
+            }
+
+        }
+
+        private fun repeat() {
+            isWaitForFrame = false
+            if (isStreaming) {
+                streamHandler?.postDelayed(this, 80)
+            }
+        }
+
+        fun aware() {
+            mFrameCount = FRAME_MAX_COUNT
+        }
+    }
 
 }

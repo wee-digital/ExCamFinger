@@ -58,6 +58,7 @@
             android:id="@+id/imageViewColor"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:scaleX="-1"
             android:background="@android:color/black"
             app:layout_constraintDimensionRatio="H,1920:1080"
             app:layout_constraintEnd_toEndOf="parent"

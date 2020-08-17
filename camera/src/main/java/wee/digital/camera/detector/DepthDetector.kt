@@ -93,22 +93,42 @@ class DepthDetector {
         if (depthFrame.width != 0 && depthFrame.height != 0) {
             val unit = depthFrame.units
             val list = mutableListOf<Float>()
-            try {
-                list.add((depthFrame.getDistance(160, 120) * unit).trim())
-                list.add((depthFrame.getDistance(320, 120) * unit).trim())
-                list.add((depthFrame.getDistance(480, 120) * unit).trim())
-                list.add((depthFrame.getDistance(160, 240) * unit).trim())
-                list.add((depthFrame.getDistance(320, 240) * unit).trim())
-                list.add((depthFrame.getDistance(480, 240) * unit).trim())
-                list.add((depthFrame.getDistance(160, 360) * unit).trim())
-                list.add((depthFrame.getDistance(320, 360) * unit).trim())
-                list.add((depthFrame.getDistance(480, 360) * unit).trim())
+            for (x in box.left() until box.right()) {
+                for (y in box.top() until box.bottom() step 10) {
+                    try {
+                        val z = (depthFrame.getDistance(x, y) * unit).trim()
+                        list.add(x.toFloat())
+                        list.add(y.toFloat())
+                        list.add(z)
+                    } catch (e: Exception) {
+                        list.clear()
+                    }
+                }
+            }
+
+            if (list.isNotEmpty()) {
                 RealSense.coordLiveData.postValue(list)
-            } catch (e: Exception) {
             }
         }
-
         isDepthDetecting = false
+    }
+
+    private fun getRootCoord(depthFrame: DepthFrame) {
+        val unit = depthFrame.units
+        val list = mutableListOf<Float>()
+        try {
+            list.add((depthFrame.getDistance(160, 120) * unit).trim())
+            list.add((depthFrame.getDistance(320, 120) * unit).trim())
+            list.add((depthFrame.getDistance(480, 120) * unit).trim())
+            list.add((depthFrame.getDistance(160, 240) * unit).trim())
+            list.add((depthFrame.getDistance(320, 240) * unit).trim())
+            list.add((depthFrame.getDistance(480, 240) * unit).trim())
+            list.add((depthFrame.getDistance(160, 360) * unit).trim())
+            list.add((depthFrame.getDistance(320, 360) * unit).trim())
+            list.add((depthFrame.getDistance(480, 360) * unit).trim())
+            RealSense.coordLiveData.postValue(list)
+        } catch (e: Exception) {
+        }
     }
 
     private fun faceChangeProcess(face: Box): Boolean {
